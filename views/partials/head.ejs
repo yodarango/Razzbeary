@@ -1,0 +1,259 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
+<link rel="stylesheet" href="https://cdn.danielrangel.net/fullds.min.css" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- Titolo e descrizione -->
+  <title>CleanFlix - Scopri e Valuta i Tuoi Film Preferiti</title>
+  <meta
+    name="description"
+    content="CleanFlix: scopri, valuta e organizza la tua libreria di film preferiti con facilità. Un progetto di Daniel Rangel."
+  />
+  <meta name="author" content="Daniel Rangel" />
+  <meta
+    name="keywords"
+    content="film, recensioni, valutazioni, Daniel Rangel, CleanFlix, film preferiti"
+  />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/public/cleanflix.webp" type="image/webp" />
+  <link rel="apple-touch-icon" href="/public/cleanflix.webp" />
+  <link rel="shortcut icon" href="/public/cleanflix.webp" type="image/webp" />
+
+  <!-- Open Graph (Facebook, LinkedIn, WhatsApp, etc.) -->
+  <meta
+    property="og:title"
+    content="CleanFlix - Scopri e Valuta i Tuoi Film Preferiti"
+  />
+  <meta
+    property="og:description"
+    content="CleanFlix: scopri, valuta e organizza la tua libreria di film preferiti con facilità. Un progetto di Daniel Rangel."
+  />
+  <meta
+    property="og:image"
+    content="https://cleanflix.shrood.app/public/cleanflix.webp"
+  />
+  <meta property="og:url" content="https://cleanflix.shrood.app" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="CleanFlix" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta
+    name="twitter:title"
+    content="CleanFlix - Scopri e Valuta i Tuoi Film Preferiti"
+  />
+  <meta
+    name="twitter:description"
+    content="CleanFlix: scopri, valuta e organizza la tua libreria di film preferiti con facilità. Un progetto di Daniel Rangel."
+  />
+  <meta
+    name="twitter:image"
+    content="https://cleanflix.shrood.app/public/cleanflix.webp"
+  />
+  <meta name="twitter:site" content="@danielrangel" />
+  <meta name="twitter:creator" content="@danielrangel" />
+
+  <!-- Meta tag generici per motori di ricerca -->
+  <meta name="robots" content="index, follow" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="bingbot" content="index, follow" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://cleanflix.shrood.app" />
+
+  <!-- Theme color per dispositivi mobili -->
+  <meta name="theme-color" content="#5200ff" />
+  <meta name="msapplication-TileColor" content="#5200ff" />
+
+  <!-- Preload per migliorare la performance -->
+  <link rel="preload" href="/public/cleanflix.webp" as="image" />
+</head>
+
+<style>
+  .bottom-menu {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--dr-beta);
+    box-shadow: 0 -2px 5px rgba(var(--dr-gamma-rgb), 0.5);
+    z-index: 20;
+  }
+
+  .bottom-menu-list {
+    display: flex;
+    justify-content: space-around;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .bottom-menu_item {
+    flex: 1;
+    text-align: center;
+    color: var(--dr-alpha);
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    padding: var(--dr-spacing-2) 0;
+  }
+
+  a:not([class]),
+  a:not([class]):hover {
+    color: inherit;
+    text-decoration: none;
+  }
+  .bottom-menu_item i {
+    display: block;
+    font-size: 2rem;
+  }
+
+  /* logo */
+  .logo {
+    object-position: center;
+    object-fit: contain;
+    height: 7rem;
+    width: 7rem;
+  }
+  /* footer */
+  footer {
+    height: 5rem;
+    width: 100%;
+  }
+
+  /* rating slider */
+  /* Stile del contenitore dello slider */
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #ff8c00, #ff4500);
+    outline: none;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+    cursor: pointer;
+  }
+
+  /* Effetto hover */
+  .slider:hover {
+    opacity: 1;
+  }
+
+  /* Stile della maniglia dello slider */
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ff4500;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
+  }
+
+  .slider::-webkit-slider-thumb:hover {
+    background: #ff8c00;
+    transform: scale(1.2);
+  }
+
+  /* Per Firefox */
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ff4500;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
+  }
+
+  .slider::-moz-range-thumb:hover {
+    background: #ff8c00;
+    transform: scale(1.2);
+  }
+
+  /* dialo */
+  .rating-dialog {
+    background-color: var(--dr-beta);
+    border: 2px solid var(--dr-iota);
+    border-radius: 10px;
+    padding: 20px;
+    width: 400px;
+  }
+
+  /* Personalizzazione dello sfondo del backdrop */
+  .rating-dialog::backdrop {
+    background-color: rgba(
+      var(--dr-delta-rgb),
+      0.2
+    ); /* Sfondo viola trasparente */
+    backdrop-filter: blur(5px); /* Effetto sfocatura */
+  }
+
+  /* Stile del valore accanto allo slider */
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, var(--dr-iota), var(--dr-delta));
+    outline: none;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+    cursor: pointer;
+  }
+
+  /* Effetto hover */
+  .slider:hover {
+    opacity: 1;
+  }
+
+  /* Stile della maniglia dello slider */
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--dr-eta);
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+
+  .slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  /* Per Firefox */
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+
+  .slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  /* Stile del valore accanto allo slider */
+  .slider-value {
+    display: inline-block;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: rgb(var(--dr-iota-rgb), 0.2);
+    border: 1px solid var(--dr-iota);
+    margin-top: var(--dr-spacing-4);
+    padding: var(--dr-spacing-2) var(--dr-spacing-4);
+    border-radius: var(--dr-spacing-1);
+  }
+</style>

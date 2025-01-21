@@ -1,0 +1,45 @@
+<section class="bottom-menu border-top">
+  <ul class="bottom-menu-list">
+    <li class="bottom-menu_item browse">
+      <a href="/"
+        ><i class="fa fa-home color-epsilon" aria-hidden="true"></i
+        ><span>Home</span></a
+      >
+    </li>
+    <li class="bottom-menu_item browse">
+      <a href="/new"
+        ><i class="fa fa-add color-epsilon" aria-hidden="true"></i
+        ><span>Coffee shop</span></a
+      >
+    </li>
+    <li class="bottom-menu_item">
+      <% if (user) { %>
+      <a href="/logout">
+        <i class="fa fa-sign-out color-epsilon" aria-hidden="true"></i>
+        <span>Log out</span>
+      </a>
+      <% } else { %>
+      <a href="/login">
+        <i class="fa fa-sign-in color-epsilon" aria-hidden="true"></i>
+        <span>Log in</span>
+      </a>
+      <% } %>
+    </li>
+  </ul>
+</section>
+
+<script>
+  const paths = {
+    "/": document.querySelector(".fa-home"),
+    "/new": document.querySelector(".fa-add"),
+    "<%= user ? '/logout' : '/login' %>": document.querySelector(
+      ".fa-sign-in, .fa-sign-out"
+    ),
+  };
+  // check path of the current page to highlight the corresponding menu item
+  const path = window.location.pathname;
+  if (paths[path]) {
+    paths[path].classList.remove("color-epsilon");
+    paths[path].classList.add("color-iota");
+  }
+</script>

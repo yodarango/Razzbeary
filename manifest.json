@@ -1,0 +1,24 @@
+{
+  "name": "CleanFlix",
+  "short_name": "CleanFlix",
+  "description": "Scopri e valuta i tuoi film preferiti con CleanFlix.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5200ff",
+  "icons": [
+    {
+      "src": "/public/cleanflix.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "/public/cleanflix.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    }
+  ],
+  "scope": "/",
+  "orientation": "portrait-primary",
+  "lang": "en-US"
+}

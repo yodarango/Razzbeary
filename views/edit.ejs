@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit film</title>
+    <%- include("./partials/head.ejs") %>
+    <style>
+      main {
+        width: 94%;
+        max-width: 50rem;
+        margin: 4rem auto;
+      }
+
+      .preview-img {
+        height: 30rem;
+        width: 20rem;
+        object-fit: cover;
+        object-position: center;
+        display: <%= movie && movie.thumbnail ? 'block' : 'none' %>;
+      }
+    </style>
+  </head>
+  <body class="container">
+    <main>
+      <%- include("./partials/header.ejs") %>
+      <h2 class="mb-4">Edit <%= movie.title %></h2>
+      <img
+        id="thumbnail-preview"
+        src="<%= movie.thumbnail %>"
+        class="card-img-show d-block mb-4 rounded bg-gamma preview-img"
+        alt="Thumbnail of <%= movie.title %>"
+      />
+      <form action="/edit/<%= movie.id %>" method="POST">
+        <div class="mb-4">
+          <label>Title:</label>
+          <input
+            type="text"
+            name="title"
+            value="<%= movie.title %>"
+            class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label>Thumbnail (Image URL):</label>
+          <input
+            type="text"
+            name="thumbnail"
+            id="thumbnail-input"
+            value="<%= movie.thumbnail %>"
+            class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
+            placeholder="Enter image URL"
+            required
+          />
+        </div>
+
+        <div class="mb-4">
+          <label>Notes:</label>
+          <textarea
+            name="notes"
+            class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
+          >
+<%= movie.notes %></textarea
+          >
+        </div>
+        <button type="submit" class="mt-4 w-100 bg-warning color-beta">
+          Update Movie
+        </button>
+      </form>
+    </main>
+    <%- include("./partials/nav.ejs") %> <%- include("./partials/footer.ejs") %>
+
+    <script>
+      const thumbnailInput = document.getElementById("thumbnail-input");
+      const thumbnailPreview = document.getElementById("thumbnail-preview");
+
+      thumbnailInput.addEventListener("input", () => {
+        const url = thumbnailInput.value.trim();
+        if (url) {
+          thumbnailPreview.src = url;
+          thumbnailPreview.style.display = "block";
+        } else {
+          thumbnailPreview.style.display = "none";
+          thumbnailPreview.src = "";
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%- include("./partials/head.ejs") %>
+    <title>Login</title>
+    <style>
+      main {
+        width: 94%;
+        max-width: 50rem;
+        margin: 4rem auto;
+      }
+    </style>
+  </head>
+  <body class="container">
+    <main>
+      <%- include("./partials/header.ejs") %>
+      <h2 class="my-4">Login</h2>
+      <% if (typeof error !== 'undefined') { %>
+      <div class="alert alert-danger"><%= error %></div>
+      <% } %>
+      <form action="/login" method="POST">
+        <div class="mb-3">
+          <label class="opacity-60 fs-3">Username:</label>
+          <input
+            type="text"
+            name="username"
+            class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
+            required
+          />
+        </div>
+        <div>
+          <label class="opacity-60 fs-3">Password:</label>
+          <input
+            type="password"
+            name="password"
+            class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
+            required
+          />
+        </div>
+        <button type="submit" class="mt-4 w-100 bg-success color-beta">
+          <i class="fa fa-sign-in-alt"></i>
+          <span>Login</span>
+        </button>
+      </form>
+    </main>
+    <%- include("./partials/nav.ejs") %> <%- include("./partials/footer.ejs") %>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%- include("./partials/head.ejs") %>
+    <title><%= movie.title %></title>
+    <style>
+      main {
+        width: 94%;
+        max-width: 50rem;
+        margin: 4rem auto;
+      }
+
+      .card-img-show {
+        height: 30rem;
+        width: 20rem;
+        object-fit: cover;
+        object-position: center;
+      }
+
+      .note-banner {
+        background-color: rgba(var(--dr-lambda-rgb), 0.1);
+      }
+
+      .back-link {
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body class="container">
+    <main>
+      <%- include("./partials/header.ejs") %>
+      <a href="/" class="fs-3 back-link">
+        <i class="fa fa-arrow-left"></i>
+        <span>Back</span>
+      </a>
+      <h2 class="my-4"><%= movie.title %></h2>
+      <img
+        src="<%= movie.thumbnail %>"
+        class="card-img-show d-block mb-4 rounded bg-gamma"
+        alt="Thumbnail of <%= movie.title %>"
+      />
+      <p class="movie-rating mb-4">
+        <span>(<%=movie.rating %>)</span>
+        <% for(let i = 1; i <= 10; i++) { %> <% if(i <= movie.rating) { %>
+        <i class="fa fa-heart fs-5 color-iota"></i>
+        <% } else { %>
+        <i class="fa fa-heart fs-5 color-alpha opacity-50"></i>
+        <% } %> <% } %>
+      </p>
+
+      <% if (movie.notes) { %>
+      <div class="note-banner rounded p-4">
+        <p class="d-flex align-items-center justify-content-start gap-2 mb-1">
+          <i class="fa fa-sticky-note fs-5 color-lambda"></i>
+          <b class="fw-bold">Notes about this filem</b>
+        </p>
+        <p><%= movie.notes %></p>
+      </div>
+      <% } %>
+    </main>
+    <%- include("./partials/nav.ejs") %> <%- include("./partials/footer.ejs") %>
+  </body>
+</html>
