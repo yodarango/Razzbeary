@@ -81,109 +81,146 @@
   <body>
     <main class="container">
       <%- include("./partials/header.ejs") %>
-      <div class="d-flex flex-wrap gap-4">
-        <% movies.forEach(movie => { %>
-        <div class="movie-card rounded bg-gamma p-4 mb-2 border border-iota">
-          <div class="card">
-            <a href="/<%= movie.id %>">
-              <img
-                src="<%= movie.thumbnail %>"
-                class="card-img-top d-block mx-auto mb-4 rounded bg-beta"
-                alt="Thumbnail of <%= movie.title %>"
-              />
-            </a>
-            <div class="card-body">
-              <h4 class="card-title mb-2 fs-5">
-                <a href="/<%= movie.id %>"><%= movie.title %></a>
-              </h4>
-              <p class="card-text mb-3">
-                <span
-                  class="rating-number bg-iota d-inline-flex align-items-center justify-content-center"
-                  ><%=movie.rating %></span
-                >
-                <% for(let i = 1; i <= 10; i++) { %> <% if(i <= movie.rating) {
-                %>
-                <i class="fa fa-heart fs-6 color-iota"></i>
-                <% } else { %>
-                <i class="fa fa-heart fs-6 color-alpha opacity-50"></i>
-                <% } %> <% } %>
-              </p>
 
-              <div class="d-flex gap-2 mb-2">
-                <a
-                  href="/edit/<%= movie.id %>"
-                  class="p-2 rounded bg-delta w-100 d-flex align-items-center justify-content-center gap-2 color-alpha"
-                >
-                  <i class="fa fa-edit"></i>
-                  <span>Edit</span>
-                </a>
-                <form
-                  action="/delete/<%= movie.id %>"
-                  method="POST"
-                  class="d-block w-100"
-                >
-                  <button
-                    type="submit"
-                    class="p-2 rounded bg-danger w-100 d-flex align-items-center justify-content-center gap-2 color-alpha"
-                    onclick="return confirm('Are you sure?')"
-                  >
-                    <i class="fa fa-trash"></i>
-                    <span>Delete</span>
-                  </button>
-                </form>
-              </div>
+      <!-- Search Bar -->
+      <div class="mb-4">
+        <p class="mb-2 opacity-60">Search all <%=movies.length%> movies</p>
+        <input
+          type="text"
+          id="search-input"
+          class="w-100 p-2 border border-iota rounded"
+          placeholder="Search movies..."
+          oninput="filterMovies()"
+        />
+      </div>
 
-              <button
-                class="p-2 rounded bg-warning color-beta w-100 d-flex align-items-center justify-content-center gap-2 color-alpha"
-                onclick="document.getElementById('rating-dialog-<%= movie.id %>').showModal();"
-              >
-                <i class="fa fa-star"></i>
-                <span>Rate</span>
-              </button>
-              <dialog
-                id="rating-dialog-<%= movie.id %>"
-                class="rating-dialog p-4 rounded border border-delta"
-              >
-                <h4 class="mb-3 color-alpha">Rating: <%= movie.title %></h4>
-                <form method="POST" action="/rate/<%= movie.id %>">
-                  <input
-                    type="range"
-                    id="rating-<%= movie.id %>"
-                    name="rating"
-                    min="1"
-                    max="10"
-                    value="<%= movie.rating %>"
-                    class="slider"
-                    oninput="document.getElementById('slider-value-<%= movie.id %>').innerText = this.value;"
-                  />
-                  <span id="slider-value-<%= movie.id %>" class="slider-value"
-                    ><%= movie.rating %></span
-                  >
-                  <div class="d-flex gap-2 mt-3">
-                    <button
-                      type="button"
-                      class="p-2 bg-danger w-100 rounded border-0 color-alpha d-flex align-items-center justify-content-center gap-2"
-                      onclick="document.getElementById('rating-dialog-<%= movie.id %>').close();"
-                    >
-                      <i class="fa fa-times"></i>
-                      <span>Close</span>
-                    </button>
-                    <button
-                      type="submit"
-                      class="p-2 bg-success w-100 color-beta rounded border-0 color-alpha d-flex align-items-center justify-content-center gap-2"
-                    >
-                      <i class="fa fa-star"></i>
-                      <span>Rate</span>
-                    </button>
-                  </div>
-                </form>
-              </dialog>
-            </div>
-          </div>
-        </div>
-        <% }); %>
+      <!-- Movies Container -->
+      <div id="movies-container" class="d-flex flex-wrap gap-4"></div>
+
+      <!-- Pagination Controls -->
+      <div class="d-flex justify-content-center mt-4">
+        <button
+          id="prev-btn"
+          class="p-2 bg-delta color-alpha rounded border-0"
+          onclick="changePage(-1)"
+          disabled
+        >
+          <i class="fa fa-arrow-left py-2 px-4"></i>
+        </button>
+        <span id="page-number" class="mx-3 py-2 px-4 bg-delta rounded">1</span>
+        <button
+          id="next-btn"
+          class="p-2 bg-delta color-alpha rounded border-0"
+          onclick="changePage(1)"
+        >
+          <i class="fa fa-arrow-right py-2 px-4"></i>
+        </button>
       </div>
     </main>
+
     <%- include('./partials/footer'); %> <%- include('./partials/nav'); %>
+
+    <script>
+      let allMovies = <%- JSON.stringify(movies) %>; // Full movie list
+      let filteredMovies = allMovies; // Movies after search filtering
+      let currentPage = 1;
+      const itemsPerPage = 20;
+
+      function renderMovies() {
+        const container = document.getElementById('movies-container');
+        container.innerHTML = '';
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedMovies = filteredMovies.slice(startIndex, endIndex);
+
+        paginatedMovies.forEach((movie) => {
+          const movieCard = document.createElement('div');
+          movieCard.classList.add('movie-card', 'rounded', 'bg-gamma', 'p-4', 'mb-2', 'border', 'border-iota');
+          movieCard.innerHTML = `
+            <div class="card">
+              <a href="/${movie.id}">
+                <img src="${movie.thumbnail}" class="card-img-top d-block mx-auto mb-4 rounded bg-beta" alt="Thumbnail of ${movie.title}">
+              </a>
+              <div class="card-body">
+                <h4 class="card-title mb-2 fs-5">
+                  <a href="/${movie.id}">${movie.title}</a>
+                </h4>
+                <p class="movie-rating mb-1">
+                  <span class="rating-number bg-iota d-inline-flex align-items-center justify-content-center">
+                    ${movie.rating > 0 ? movie.rating : "0"}
+                  </span>
+                  ${generateRatingHearts(movie.rating)}
+                </p>
+                 <i class="opacity-60 d-block  mb-4">(Total reviews: ${movie.total_reviews > 0 ? movie.total_reviews : "0"})</i>
+                <a href="/edit/${movie.id}" class="p-2 mb-2 rounded bg-delta w-100 d-flex align-items-center justify-content-center gap-2 color-alpha">
+                  <i class="fa fa-edit"></i><span>Edit</span>
+                </a>
+                <form action="/delete/${movie.id}" method="POST" class="d-block w-100 mb-2">
+                  <button type="submit" class="p-2 rounded bg-danger w-100 d-flex align-items-center justify-content-center gap-2 color-alpha"
+                    onclick="return confirm('Are you sure?')">
+                    <i class="fa fa-trash"></i><span>Delete</span>
+                  </button>
+                </form>
+                <button class="p-2 rounded bg-warning color-beta w-100 d-flex align-items-center justify-content-center gap-2 color-alpha"
+                  onclick="document.getElementById('rating-dialog-${movie.id}').showModal();">
+                  <i class="fa fa-star"></i><span>Rate</span>
+                </button>
+                <dialog id="rating-dialog-${movie.id}" class="rating-dialog p-4 rounded border border-delta">
+                  <h4 class="mb-3 color-alpha">Rating: ${movie.title}</h4>
+                  <form method="POST" action="/rate/${movie.id}">
+                    <input type="range" id="rating-${movie.id}" name="rating" min="1" max="10" value="${movie.rating}" class="slider"
+                      oninput="document.getElementById('slider-value-${movie.id}').innerText = this.value;">
+                    <span id="slider-value-${movie.id}" class="slider-value">${movie.rating > 0 ? movie.rating : "0"}</span>
+                    <i class="opacity-60">(Total reviews: ${movie.total_reviews > 0 ? movie.total_reviews : "0"})</i>
+                    <div class="d-flex gap-2 mt-3">
+                      <button type="button" class="p-2 bg-danger w-100 rounded border-0 color-alpha d-flex align-items-center justify-content-center gap-2"
+                        onclick="document.getElementById('rating-dialog-${movie.id}').close();">
+                        <i class="fa fa-times"></i><span>Close</span>
+                      </button>
+                      <button type="submit" class="p-2 bg-success w-100 color-beta rounded border-0 color-alpha d-flex align-items-center justify-content-center gap-2">
+                        <i class="fa fa-star"></i><span>Rate</span>
+                      </button>
+                    </div>
+                  </form>
+                </dialog>
+              </div>
+            </div>
+          `;
+          container.appendChild(movieCard);
+        });
+
+        document.getElementById('page-number').innerText = currentPage;
+        document.getElementById('prev-btn').disabled = currentPage === 1;
+        document.getElementById('next-btn').disabled = endIndex >= filteredMovies.length;
+      }
+
+      function generateRatingHearts(rating) {
+        let hearts = '';
+        for (let i = 1; i <= 10; i++) {
+          if (i <= rating) {
+            hearts += '<i class="fa fa-heart fs-6 color-iota me-1"></i>';
+          } else {
+            hearts += '<i class="fa fa-heart fs-6 color-alpha opacity-50 me-1"></i>';
+          }
+        }
+        return hearts;
+      }
+
+      function changePage(step) {
+        currentPage += step;
+        renderMovies();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function filterMovies() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        filteredMovies = allMovies.filter(movie => movie.title.toLowerCase().includes(query));
+        currentPage = 1;
+        renderMovies();
+      }
+
+      renderMovies();
+    </script>
   </body>
 </html>

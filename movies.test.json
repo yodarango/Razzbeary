@@ -1,0 +1,261 @@
+[
+  {
+    "id": 1,
+    "title": "Harry Potter and the Sorcerer's Stone",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/6nZJ3dKqdI2t4I1E8pU5kzUj9rT.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 2,
+    "title": "Harry Potter and the Chamber of Secrets",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/1stUIsjawROZxjiCMtqqXqgfZWC.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 3,
+    "title": "Harry Potter and the Prisoner of Azkaban",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/aWxwnYoe8p2d2fcxOqtvAtJ72Rw.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 4,
+    "title": "Harry Potter and the Goblet of Fire",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/fECBtHlr0RB3foNHDiCBXeg9Bv9.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 5,
+    "title": "Harry Potter and the Order of the Phoenix",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/4YnLxYLHhT4UQ8i9jxAXWy46T0b.jpg",
+    "total_reviews": 1,
+    "total_rating": 0,
+    "rating": 4
+  },
+  {
+    "id": 6,
+    "title": "Harry Potter and the Half-Blood Prince",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/z7uo9zmQdQwU5ZJHFpv2Upl30i1.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 7,
+    "title": "Harry Potter and the Deathly Hallows – Part 1",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/maP4MTfPCeVD2FZbKTLUgriOW4R.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 8,
+    "title": "Harry Potter and the Deathly Hallows – Part 2",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/fTplI1NCSuEDP4ITLcTps739fcC.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 9,
+    "title": "The Lord of the Rings: The Fellowship of the Ring",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 10,
+    "title": "The Lord of the Rings: The Two Towers",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/rrGlNlzFTrXFNGXsD7NNlxq4BPb.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 11,
+    "title": "The Lord of the Rings: The Return of the King",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/8BPZO0Bf8TeAy8znF43z8soK3ys.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 12,
+    "title": "Planet 51",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/8pN0r6rppY0vYQ1GkW8rR1vwgu7.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 13,
+    "title": "Escape from Planet Earth",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/7ShkhAbcUOe0mHqOhQp0J8xyT2y.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 14,
+    "title": "Migration",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/your_image_path.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 15,
+    "title": "Rio",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/odeUNlWUcjjxQhqNVe811oyfiVW.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 16,
+    "title": "Rio 2",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/niYfA3Jm0FAYl1NUBH9l2lEMnbl.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 17,
+    "title": "Chicken Little",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/2Kzv1nLnM1xQmI0gk77xvYfFfOG.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 18,
+    "title": "Wreck-It Ralph",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/8wBKXZNod4frLZjAKSDuAcQ2dEU.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 19,
+    "title": "Ralph Breaks the Internet",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/qEnH5meR381iMpmCumAIMswcQw2.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 20,
+    "title": "Up",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/xyGhzZoWmuqLRnRPQeQeHmpnF1Z.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 21,
+    "title": "Star Wars: Episode IV – A New Hope",
+    "release_date": "1977-05-25",
+    "director": "George Lucas",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/kXZXjvBe9nDkF1LR5Jk8aQkJDdX.jpg",
+    "synopsis": "Luke Skywalker joins forces with a Jedi Knight, a cocky pilot, a Wookiee, and two droids to save the galaxy from the Empire's world-destroying battle station, while also attempting to rescue Princess Leia from the mysterious Darth Vader.",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 22,
+    "title": "Star Wars: Episode V – The Empire Strikes Back",
+    "release_date": "1980-05-21",
+    "director": "Irvin Kershner",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+    "synopsis": "After the Rebels are brutally overpowered by the Empire on the ice planet Hoth, Luke Skywalker begins Jedi training with Yoda, while his friends are pursued by Darth Vader.",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 23,
+    "title": "Star Wars: Episode VI – Return of the Jedi",
+    "release_date": "1983-05-25",
+    "director": "Richard Marquand",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/xe3z9s7VRpRz2SmWGiSLclqNc6p.jpg",
+    "synopsis": "After rescuing Han Solo from Jabba the Hutt, the Rebels attempt to destroy the second Death Star, while Luke struggles to help Darth Vader back from the dark side.",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 24,
+    "title": "Star Wars: Episode I – The Phantom Menace",
+    "release_date": "1999-05-19",
+    "director": "George Lucas",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/6wkfovpn7Eq8dYNKaG5PY3q2oq6.jpg",
+    "synopsis": "Two Jedi escape a hostile blockade to find allies and come across a young boy who may bring balance to the Force, but the long-dormant Sith resurface to reclaim their old glory.",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 25,
+    "title": "Star Wars: Episode II – Attack of the Clones",
+    "release_date": "2002-05-16",
+    "director": "George Lucas",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/2vcNFtrZXNwIcBgH5e2xXCmVR8t.jpg",
+    "synopsis": "Ten years after initially meeting, Anakin Skywalker shares a forbidden romance with Padmé Amidala, while Obi-Wan Kenobi investigates an assassination attempt on the senator and discovers a secret clone army crafted for the Jedi.",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 26,
+    "title": "Star Wars: Episode III – Revenge of the Sith",
+    "release_date": "2005-05-19",
+    "director": "George Lucas",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/tgr5Pdy7ehZYBqBkN2K7Q02xgOb.jpg",
+    "synopsis": "Three years into the Clone Wars, the Jedi rescue Palpatine from Count Dooku. As Obi-Wan pursues a new threat, Anakin acts as a double agent between the Jedi Council and Palpatine and is lured into a sinister plan to rule the galaxy.",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 27,
+    "title": "Star Wars: Episode VII – The Force Awakens",
+    "release_date": "2015-12-18",
+    "director": "J.J. Abrams",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/wqnLdwVXoBjKibFRR5U3y0aDUhs.jpg",
+    "synopsis": "As a new threat to the galaxy rises, Rey, a desert scavenger, and Finn, an ex-stormtrooper, join Han Solo and Chewbacca to search for the one hope of restoring peace.",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 28,
+    "title": "Star Wars: Episode VIII – The Last Jedi",
+    "release_date": "2017-12-15",
+    "director": "Rian Johnson",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/kOVEVeg59E0wsnXmF9nrh6OmWII.jpg",
+    "synopsis": "Rey develops her newly discovered abilities with the guidance of Luke Skywalker, who is unsettled by the strength of her powers. Meanwhile, the Resistance prepares to do battle with the First Order.",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 29,
+    "title": "Star Wars: Episode IX – The Rise of Skywalker",
+    "release_date": "2019-12-20",
+    "director": "J.J. Abrams",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/db32LaOibwEliAmSL2jjDF6oDdj.jpg",
+    "synopsis": "The surviving members of the Resistance face the First Order once again, and the final battle brings the legendary conflict between the Jedi and the Sith to a climax.",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 30,
+    "title": "Shrek",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/kXZXjvBe9nDkF1LR5Jk8aQkJDdX.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 31,
+    "title": "Shrek 2",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/2yYP0PQjG8zVqturh1BAqu2Tixl.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 32,
+    "title": "Shrek the Third",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/6HrfPZtKcGmX2tUWW3cnciZTaSD.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  },
+  {
+    "id": 33,
+    "title": "Shrek Forever After",
+    "thumbnail": "https://image.tmdb.org/t/p/w500/6HrfPZtKcGmX2tUWW3cnciZTaSD.jpg",
+    "total_reviews": 0,
+    "total_rating": 0
+  }
+]

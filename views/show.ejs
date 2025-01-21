@@ -24,15 +24,31 @@
       .back-link {
         text-decoration: none;
       }
+
+      .rating-number {
+        border-radius: 50%;
+        height: 2rem;
+        width: 2rem;
+      }
     </style>
   </head>
   <body class="container">
     <main>
       <%- include("./partials/header.ejs") %>
-      <a href="/" class="fs-3 back-link">
-        <i class="fa fa-arrow-left"></i>
-        <span>Back</span>
-      </a>
+      <div class="d-flex align-items-center justify-content-between gap-2">
+        <a href="/" class="fs-3 back-link">
+          <i class="fa fa-arrow-left"></i>
+          <span>Back</span>
+        </a>
+
+        <a
+          href="/edit/<%= movie.id %>"
+          class="fs-3 bg-delta color-alpha py-2 px-4 rounded"
+        >
+          <i class="fa fa-edit"></i>
+          <span>Edit</span>
+        </a>
+      </div>
       <h2 class="my-4"><%= movie.title %></h2>
       <img
         src="<%= movie.thumbnail %>"
@@ -40,7 +56,10 @@
         alt="Thumbnail of <%= movie.title %>"
       />
       <p class="movie-rating mb-4">
-        <span>(<%=movie.rating %>)</span>
+        <span
+          class="rating-number bg-iota d-inline-flex align-items-center justify-content-center"
+          ><%=movie.rating > 0 ? movie.rating : "0" %></span
+        >
         <% for(let i = 1; i <= 10; i++) { %> <% if(i <= movie.rating) { %>
         <i class="fa fa-heart fs-5 color-iota"></i>
         <% } else { %>
