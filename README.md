@@ -105,3 +105,8 @@ cleanflix/
 │-- package.json # Dipendenze e script
 │-- movies.json # Database locale per i film
 │-- README.md # Documentazione del progetto
+
+# TODO
+
+- add search
+- add pagination

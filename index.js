@@ -105,7 +105,7 @@ app.get("/logout", (req, res) => {
 });
 
 // Rotta principale: mostra tutti i film
-app.get("/", (req, res) => {
+app.get("/", isAuthenticated, (req, res) => {
   const movies = readData();
   res.render("index", {
     movies,
