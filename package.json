@@ -4,7 +4,7 @@
   "description": "An app to review and manage watched movies",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node index.js",
     "pm2": "pm2 start --name=cleanflix index.js --watch",
     "dev": "nodemon index.js"
   },
