@@ -67,7 +67,7 @@ SECRET_KEY=secret
 ### 3. Docker
 
 docker build -t cleanflix-app .
-docker run -p 3000:3000 --env-file .env cleanflix-app
+docker run -p 8004:8004 --env-file .env cleanflix-app
 
 version: '3.8'
 

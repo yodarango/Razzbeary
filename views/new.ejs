@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Add a new film</title>
+    <title>Aggiungi un nuovo film</title>
     <%- include("./partials/head.ejs") %>
     <style>
       main {
@@ -15,53 +15,190 @@
         object-fit: cover;
         object-position: center;
       }
+      .movie-result img {
+        height: 10rem;
+        margin-right: 1rem;
+      }
     </style>
   </head>
   <body class="container">
     <main>
       <%- include("./partials/header.ejs") %>
-      <img
-        id="thumbnail-preview"
-        src=""
-        class="card-img-show d-block mb-4 rounded bg-gamma preview-img"
-        alt="Thumbnail preview"
-      />
-      <form action="/new" method="POST">
+
+      <nav class="mb-4 d-flex align-items-center justify-content-start gap-4">
+        <a href="?add=tmdb" class="mr-2 color-zeta" id="nav-tmdb">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Add with TMDB</span>
+        </a>
+        <a href="?add=manual" class="mr-2 color-zeta" id="nav-manual">
+          <i class="fa-solid fa-hand"></i>
+          <span>Add manually</span>
+        </a>
+      </nav>
+      <!-- Aggiunge un film automaticamente -->
+      <div id="add-movie-tmdb" class="d-none">
         <div class="mb-4">
-          <label>Title:</label>
+          <label for="search-query">Search for a movie</label>
           <input
             type="text"
-            name="title"
-            class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
-            required
+            id="search-query"
+            class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded mb-4"
+            placeholder="Look for a film"
           />
-        </div>
-        <div class="mb-4">
-          <label>Thumbnail (Image URL):</label>
-          <input
-            type="text"
-            name="thumbnail"
-            id="thumbnail-input"
-            class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
-            placeholder="Enter image URL"
-            required
-          />
+          <button id="search-button" class="mt-2 w-100 bg-success color-beta">
+            Search
+          </button>
         </div>
 
-        <div class="mb-4">
-          <label>Notes:</label>
-          <textarea
-            name="notes"
-            class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
-          ></textarea>
-        </div>
-        <button type="submit" class="mt-4 w-100 bg-success color-beta">
-          Add Movie
-        </button>
-      </form>
+        <!-- Sezione per i risultati della ricerca -->
+        <div id="search-results" class="mb-4"></div>
+      </div>
+      <!-- Aggiunge un film manualmente-->
+      <div id="add-movie-manual" class="d-none">
+        <img
+          id="thumbnail-preview"
+          src=""
+          class="card-img-show d-block mb-4 rounded bg-gamma preview-img"
+          alt="Anteprima della miniatura"
+          style="display: none"
+        />
+
+        <!-- Form per aggiungere un nuovo film manualmente -->
+        <form action="/new" method="POST">
+          <div class="mb-4">
+            <label>Titolo:</label>
+            <input
+              type="text"
+              name="title"
+              class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label>Miniatura (URL dell'immagine):</label>
+            <input
+              type="text"
+              name="thumbnail"
+              id="thumbnail-input"
+              class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
+              placeholder="Inserisci l'URL dell'immagine"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label>Note:</label>
+            <textarea
+              name="notes"
+              class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
+            ></textarea>
+          </div>
+          <button type="submit" class="mt-4 w-100 bg-success color-beta">
+            Aggiungi Film
+          </button>
+        </form>
+      </div>
     </main>
     <%- include("./partials/nav.ejs") %> <%- include("./partials/footer.ejs") %>
 
+    <!-- render the specific tab based on the search query -->
+    <script>
+      const searchParams = new URLSearchParams(window.location.search);
+      const add = searchParams.get("add");
+      if (add === "manual") {
+        document.getElementById("add-movie-manual").classList.remove("d-none");
+        document.getElementById("add-movie-manual").classList.add("d-block");
+        document.getElementById("nav-manual").classList.add("color-iota");
+        document.getElementById("nav-manual").classList.remove("color-zeta");
+      } else {
+        document.getElementById("add-movie-tmdb").classList.remove("d-none");
+        document.getElementById("add-movie-tmdb").classList.add("d-block");
+        document.getElementById("nav-tmdb").classList.add("color-iota");
+        document.getElementById("nav-tmdb").classList.remove("color-zeta");
+      }
+    </script>
+    <script>
+      const searchButton = document.getElementById("search-button");
+      const searchQuery = document.getElementById("search-query");
+      const searchResults = document.getElementById("search-results");
+
+      // Funzione per salvare il film
+      async function saveMovie(movie) {
+        try {
+          const req = await fetch("/add-from-tmdb", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: movie.id,
+              title: movie.title,
+              thumbnail: movie.poster_path,
+            }),
+          });
+
+          const res = await req.json();
+
+          if (req.ok) {
+            alert("Film added Successfully");
+          } else {
+            alert("Error adding movie");
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Error adding movie");
+        }
+      }
+
+      // Gestore per il click del pulsante di ricerca
+      searchButton.addEventListener("click", () => {
+        const query = searchQuery.value.trim();
+        if (query) {
+          fetch(`/search?query=${encodeURIComponent(query)}`)
+            .then((response) => response.json())
+            .then((data) => {
+              searchResults.innerHTML = "";
+              if (data.results && data.results.length > 0) {
+                data.results.forEach((movie) => {
+                  const movieElement = document.createElement("div");
+                  movieElement.classList.add(
+                    "movie-result",
+                    "mb-2",
+                    "p-2",
+                    "border",
+                    "border-iota",
+                    "rounded",
+                    "bg-gamma"
+                  );
+                  movieElement.innerHTML = `
+              <div class="d-flex align-items-center justify-content-start gap-3">
+                <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" alt="${movie.title}" />
+                <div>
+                  <strong>${movie.title}</strong>
+                  <div class="d-flex align-items-center justify-content-start gap-3">
+                    <i class="opacity-70">${movie.release_date}</i>
+                    <button class="add-movie-button color-success bg-nu color-beta ml-2">
+                      <i class="fa-solid fa-plus"></i>
+                      <span>Add</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+                  // Aggiungi l'evento click al pulsante "Add"
+                  movieElement
+                    .querySelector(".add-movie-button")
+                    .addEventListener("click", () => saveMovie(movie));
+                  searchResults.appendChild(movieElement);
+                });
+              } else {
+                searchResults.innerHTML = "<p>Nessun risultato trovato.</p>";
+              }
+            });
+        }
+      });
+    </script>
+
+    <!--  renderizza il thumbnail quando il input cambii -->
     <script>
       const thumbnailInput = document.getElementById("thumbnail-input");
       const thumbnailPreview = document.getElementById("thumbnail-preview");

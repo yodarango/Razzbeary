@@ -1,15 +1,20 @@
 require("dotenv").config();
 
-const express = require("express");
-const fs = require("fs");
-const path = require("path");
+const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
-const cookieParser = require("cookie-parser");
+const fetch = require("node-fetch");
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
 
+// app
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+// ENV variables
+const TMBD_READ_ACCESS_TOKEN = process.env.TMBD_READ_ACCESS_TOKEN;
 const SECRET_KEY = process.env.SECRET_KEY || "defaultsecret";
+const PORT = process.env.PORT || 3000;
 const USER_CREDENTIALS = {
   username: process.env.USERNAME,
   password: process.env.PASSWORD,
@@ -21,11 +26,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // PWA Config
 app.get("/manifest.json", (req, res) => {
   res.sendFile(path.join(__dirname, "public/manifest.json"));
 });
+
 app.get("/service-worker.js", (req, res) => {
   res.set("Service-Worker-Allowed", "/");
   res.sendFile(path.join(__dirname, "public/service-worker.js"));
@@ -75,27 +83,15 @@ const writeData = (data) => {
   fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
 };
 
-// Rotta per il login
+/***************************************************************
+ * POST REQUESTS
+ ***************************************************************/
+// Renderizza la pagina di login
 app.get("/login", (req, res) => {
   if (req.user) {
     return res.redirect("/");
   }
   res.render("login");
-});
-
-app.post("/login", (req, res) => {
-  const { username, password } = req.body;
-  if (
-    username.toLocaleLowerCase() ===
-      USER_CREDENTIALS.username.toLocaleLowerCase() &&
-    password === USER_CREDENTIALS.password
-  ) {
-    const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
-    res.cookie("token", token, { httpOnly: true });
-    return res.redirect("/");
-  } else {
-    res.render("login", { error: "Credenziali non valide" });
-  }
 });
 
 // Rotta per il logout
@@ -104,12 +100,42 @@ app.get("/logout", (req, res) => {
   res.redirect("/login");
 });
 
-// Rotta principale: mostra tutti i film
-app.get("/", isAuthenticated, (req, res) => {
+// Rotta per modificare un film esistente (protetta)
+app.get("/edit/:id", isAuthenticated, (req, res) => {
   const movies = readData();
-  res.render("index", {
-    movies,
-  });
+  const movie = movies.find((m) => m.id === parseInt(req.params.id));
+  if (!movie) return res.status(404).send("Film non trovato");
+  res.render("edit", { movie });
+});
+
+// Rotta per cercare film tramite TMDB
+app.get("/search", isAuthenticated, async (req, res) => {
+  const query = req.query.query;
+
+  if (!query) {
+    return res.json({ results: [] });
+  }
+
+  const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
+    query
+  )}&include_adult=false&language=en-US&page=1`;
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${TMBD_READ_ACCESS_TOKEN}`,
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const data = await response.json();
+
+    res.json(data);
+  } catch (error) {
+    console.error("Errore durante la ricerca del film:", error);
+    res.status(500).json({ error: "Errore durante la ricerca del film" });
+  }
 });
 
 // Rotta per il form di creazione di un nuovo film (protetta)
@@ -125,11 +151,47 @@ app.get("/:id", isAuthenticated, (req, res) => {
   res.render("show", { movie });
 });
 
+// Rotta principale: mostra tutti i film
+app.get("/", isAuthenticated, (req, res) => {
+  const movies = readData();
+  res.render("index", {
+    movies,
+  });
+});
+
+/***************************************************************
+ * POST REQUESTS
+ ***************************************************************/
+// Rotta per il login
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+  if (
+    username.toLocaleLowerCase() ===
+      USER_CREDENTIALS.username.toLocaleLowerCase() &&
+    password === USER_CREDENTIALS.password
+  ) {
+    const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
+    res.cookie("token", token, { httpOnly: true });
+    return res.redirect("/");
+  } else {
+    res.render("login", { error: "Credenziali non valide" });
+  }
+});
+
 // Rotta per aggiungere un nuovo film (protetta)
 app.post("/new", isAuthenticated, (req, res) => {
   const movies = readData();
+  // rcreate a random Id from letter and numbers
+  const id = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    .split("")
+    .sort(() => Math.random() - 0.5)
+    .join("")
+    .substring(0, 10)
+    .replace(/(.{5})/g, "$1-")
+    .slice(0, -1);
+
   const newMovie = {
-    id: movies.length ? movies[movies.length - 1].id + 1 : 1,
+    id: "MANUAL-" + id,
     title: req.body.title,
     notes: req.body.notes,
     rating: 0,
@@ -169,14 +231,6 @@ app.post("/rate/:id", isAuthenticated, (req, res) => {
   res.redirect("/");
 });
 
-// Rotta per modificare un film esistente (protetta)
-app.get("/edit/:id", isAuthenticated, (req, res) => {
-  const movies = readData();
-  const movie = movies.find((m) => m.id === parseInt(req.params.id));
-  if (!movie) return res.status(404).send("Film non trovato");
-  res.render("edit", { movie });
-});
-
 // Rotta per aggiornare un film esistente (protetta)
 app.post("/edit/:id", isAuthenticated, (req, res) => {
   let movies = readData();
@@ -200,6 +254,38 @@ app.post("/delete/:id", isAuthenticated, (req, res) => {
   res.redirect("/");
 });
 
+// Rotta per aggiungere un film tramite TMDB
+app.post("/add-from-tmdb", isAuthenticated, async (req, res) => {
+  const id = req.body.id;
+
+  if (!id) {
+    return res.status(400).json({ error: "ID del film mancante" });
+  }
+
+  const movies = readData();
+
+  // const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US`;
+  const thumbnail = req.body.thumbnail;
+  const title = req.body.title;
+  const total_reviews = 0;
+  const total_rating = 0;
+
+  const newMovie = {
+    id,
+    title,
+    total_reviews,
+    total_rating,
+    thumbnail,
+  };
+
+  movies.push(newMovie);
+  writeData(movies);
+  res.status(201).json(newMovie);
+});
+
+/***************************************************************
+ * ASCOLTA E SERVE
+ ***************************************************************/
 // Avvio del server
 app.listen(PORT, () => {
   console.log(`Server in esecuzione su http://localhost:${PORT}`);
