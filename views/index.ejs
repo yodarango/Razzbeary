@@ -146,30 +146,32 @@
                 <h4 class="card-title mb-2 fs-5">
                   <a href="/${movie.id}">${movie.title}</a>
                 </h4>
-                <p class="movie-rating mb-1">
+                <div class="movie-rating mb-3 d-flex align-items-center gap-2 justify-content-start">
                   <span class="rating-number bg-iota d-inline-flex align-items-center justify-content-center">
                     ${movie.rating > 0 ? movie.rating : "0"}
                   </span>
-                  ${generateRatingHearts(movie.rating)}
-                </p>
-                 <i class="opacity-60 d-block  mb-4">(Total reviews: ${movie.total_reviews > 0 ? movie.total_reviews : "0"})</i>
-                <a href="/edit/${movie.id}" class="p-2 mb-2 rounded bg-delta w-100 d-flex align-items-center justify-content-center gap-2 color-alpha">
-                  <i class="fa fa-edit"></i><span>Edit</span>
-                </a>
-                <form action="/delete/${movie.id}" method="POST" class="d-block w-100 mb-2">
-                  <button type="submit" class="p-2 rounded bg-danger w-100 d-flex align-items-center justify-content-center gap-2 color-alpha"
-                    onclick="return confirm('Are you sure?')">
-                    <i class="fa fa-trash"></i><span>Delete</span>
+                  <i class="fa fa-heart fs-3 color-iota"></i>
+                  <i class="opacity-60 d-block">(Total: ${movie.total_reviews > 0 ? movie.total_reviews : "0"})</i>
+                </div>
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                  <a href="/edit/${movie.id}" class="p-2 rounded bg-delta w-100 d-flex align-items-center justify-content-center gap-2 color-alpha">
+                    <i class="fa fa-edit"></i>
+                  </a>
+                  <form action="/delete/${movie.id}" method="POST" class="d-block w-100">
+                    <button type="submit" class="p-2 rounded bg-danger w-100 d-flex align-items-center justify-content-center gap-2 color-alpha"
+                      onclick="return confirm('Are you sure?')">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </form>
+                  <button class="p-2 rounded bg-warning color-beta w-100 d-flex align-items-center justify-content-center gap-2 color-alpha"
+                    onclick="document.getElementById('rating-dialog-${movie.id}').showModal();">
+                    <i class="fa fa-star"></i>
                   </button>
-                </form>
-                <button class="p-2 rounded bg-warning color-beta w-100 d-flex align-items-center justify-content-center gap-2 color-alpha"
-                  onclick="document.getElementById('rating-dialog-${movie.id}').showModal();">
-                  <i class="fa fa-star"></i><span>Rate</span>
-                </button>
+                </div>
                 <dialog id="rating-dialog-${movie.id}" class="rating-dialog p-4 rounded border border-delta">
                   <h4 class="mb-3 color-alpha">Rating: ${movie.title}</h4>
                   <form method="POST" action="/rate/${movie.id}">
-                    <input type="range" id="rating-${movie.id}" name="rating" min="1" max="10" value="${movie.rating}" class="slider"
+                    <input type="range" id="rating-${movie.id}" name="rating" min="1" max="10" step="0.1" value="${movie.rating}" class="slider"
                       oninput="document.getElementById('slider-value-${movie.id}').innerText = this.value;">
                     <span id="slider-value-${movie.id}" class="slider-value">${movie.rating > 0 ? movie.rating : "0"}</span>
                     <i class="opacity-60">(Total reviews: ${movie.total_reviews > 0 ? movie.total_reviews : "0"})</i>
@@ -195,17 +197,18 @@
         document.getElementById('next-btn').disabled = endIndex >= filteredMovies.length;
       }
 
-      function generateRatingHearts(rating) {
-        let hearts = '';
-        for (let i = 1; i <= 10; i++) {
-          if (i <= rating) {
-            hearts += '<i class="fa fa-heart fs-6 color-iota me-1"></i>';
-          } else {
-            hearts += '<i class="fa fa-heart fs-6 color-alpha opacity-50 me-1"></i>';
-          }
-        }
-        return hearts;
-      }
+      // Questo genera un quore per ogni punto entero della evalutazione nella recensione
+      // function generateRatingHearts(rating) {
+      //   let hearts = '';
+      //   for (let i = 1; i <= 10; i++) {
+      //     if (i <= rating) {
+      //       hearts += '<i class="fa fa-heart fs-6 color-iota me-1"></i>';
+      //     } else {
+      //       hearts += '<i class="fa fa-heart fs-6 color-alpha opacity-50 me-1"></i>';
+      //     }
+      //   }
+      //   return hearts;
+      // }
 
       function changePage(step) {
         currentPage += step;
