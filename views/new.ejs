@@ -132,7 +132,7 @@
             body: JSON.stringify({
               id: movie.id,
               title: movie.title,
-              thumbnail: movie.poster_path,
+              thumbnail: `https://image.tmdb.org/t/p/w200${movie.poster_path}`,
             }),
           });
 
