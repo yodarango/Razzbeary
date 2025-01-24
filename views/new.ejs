@@ -18,8 +18,13 @@
       .movie-result img {
         height: 10rem;
         margin-right: 1rem;
+        cursor: pointer;
       }
 
+      .movie-result img:hover {
+        transition: scale 3000ms ease-in-out;
+        scale: 1.05;
+      }
       #movie-dialog {
         max-width: 60rem;
         width: 940%;
@@ -51,13 +56,20 @@
       <!-- Aggiunge un film automaticamente -->
       <div id="add-movie-tmdb" class="d-none">
         <div class="mb-4">
-          <label for="search-query">Search for a movie</label>
-          <input
-            type="text"
-            id="search-query"
-            class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded mb-4"
-            placeholder="Look for a film"
-          />
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <input
+              type="text"
+              id="search-query"
+              class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
+              placeholder="Look for a film"
+            />
+            <button
+              class="bg-nu color-alpha p-0"
+              onclick="cleanCurrentSearch()"
+            >
+              <i class="fa-solid fa-xmark fs-1"></i>
+            </button>
+          </div>
           <button id="search-button" class="mt-2 w-100 bg-success color-beta">
             Search
           </button>
@@ -112,6 +124,14 @@
       </div>
     </main>
     <%- include("./partials/nav.ejs") %> <%- include("./partials/footer.ejs") %>
+
+    <!-- clean input -->
+    <script>
+      function cleanCurrentSearch() {
+        document.getElementById("search-query").value = "";
+        document.getElementById("search-results").innerHTML = "";
+      }
+    </script>
 
     <!-- render the specific tab based on the search query -->
     <script>
