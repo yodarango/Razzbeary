@@ -113,6 +113,9 @@ app.get("/edit/:id", isAuthenticated, (req, res) => {
 app.get("/search", isAuthenticated, async (req, res) => {
   const query = req.query.query;
 
+  const movies = readData(moviesTable);
+  const movieIds = movies.map((m) => m.id);
+
   if (!query) {
     return res.json({ results: [] });
   }
@@ -132,7 +135,13 @@ app.get("/search", isAuthenticated, async (req, res) => {
     const response = await fetch(url, options);
     const data = await response.json();
 
-    res.json(data);
+    // check if the movie is already in the database
+    const results = data.results.map((movie) => {
+      const isAdded = movieIds.includes(movie.id);
+      return { ...movie, isAdded };
+    });
+
+    res.json({ results });
   } catch (error) {
     console.error("Errore durante la ricerca del film:", error);
     res.status(500).json({ error: "Errore durante la ricerca del film" });

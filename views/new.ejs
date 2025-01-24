@@ -171,14 +171,26 @@
                   );
                   movieElement.innerHTML = `
               <div class="d-flex align-items-center justify-content-start gap-3">
-                <img src="https://image.tmdb.org/t/p/w200${movie.poster_path}" alt="${movie.title}" />
+                <img src="https://image.tmdb.org/t/p/w200${
+                  movie.poster_path
+                }" alt="${movie.title}" />
                 <div>
                   <strong>${movie.title}</strong>
                   <div class="d-flex align-items-center justify-content-start gap-3">
                     <i class="opacity-70">${movie.release_date}</i>
-                    <button class="add-movie-button color-success bg-nu color-beta ml-2">
-                      <i class="fa-solid fa-plus"></i>
-                      <span>Add</span>
+                    <button class="${
+                      movie.isAdded ? "" : `add-movie-button`
+                    }  bg-nu color-beta ml-2">
+                      ${
+                        movie.isAdded
+                          ? `<i class="fa-solid fa-check color-success"></i>`
+                          : `<i class="fa-solid fa-plus  color-zeta"></i>`
+                      }
+                      ${
+                        movie.isAdded
+                          ? `<span class="color-success">Added</span>`
+                          : `<span class="color-zeta">Add</span>`
+                      }
                     </button>
                   </div>
                 </div>
@@ -187,7 +199,7 @@
                   // Aggiungi l'evento click al pulsante "Add"
                   movieElement
                     .querySelector(".add-movie-button")
-                    .addEventListener("click", () => saveMovie(movie));
+                    ?.addEventListener("click", () => saveMovie(movie));
                   searchResults.appendChild(movieElement);
                 });
               } else {
