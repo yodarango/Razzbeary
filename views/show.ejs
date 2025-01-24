@@ -65,7 +65,8 @@
 
       <!-- for each uder in the ratings map, display the rating -->
       <div>
-        <% for (const [user, rating] of Object.entries(movie.ratings)) { %>
+        <% if (movie.ratings && Object.keys(movie.ratings).length > 0) { %> <%
+        for (const [user, rating] of Object.entries(movie.ratings)) { %>
         <p class="d-flex align-items-center justify-content-start gap-2 mb-1">
           <i class="fa fa-user fs-5 color-epsilon"></i>
           <b class="fw-bold"><%= user %></b>
@@ -74,15 +75,18 @@
           >
             <span
               class="rating-number bg-iota d-inline-flex align-items-center justify-content-center"
-              ><%= rating %></span
             >
-            <% for(let i = 1; i <= 10; i++) { %> <% if(i <= rating) { %>
+              <%= rating %>
+            </span>
+            <% for (let i = 1; i <= 10; i++) { %> <% if (i <= rating) { %>
             <i class="fa fa-heart fs-5 color-iota"></i>
             <% } else { %>
             <i class="fa fa-heart fs-5 color-alpha opacity-50"></i>
             <% } %> <% } %>
           </span>
         </p>
+        <% } %> <% } else { %>
+        <p class="text-muted">No ratings available.</p>
         <% } %>
       </div>
       <% if (movie.notes) { %>

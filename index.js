@@ -175,27 +175,12 @@ app.post("/login", (req, res) => {
       u.password === password
   );
 
-  const devLogin =
-    password === process.env.USERNAME && process.env.PASSWORD === password;
-
-  const canLogin =
-    process.env.ENVIRONMENT === "development" ? devLogin : !!user;
-
-  const devUser = {
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
-    id: 0,
-  };
-
-  const userToLogin =
-    process.env.ENVIRONMENT === "development" ? devUser : user;
-
-  if (!canLogin) {
+  if (!user) {
     console.log("Login failed. Invalid credentials");
     return res.render("login", { error: "Your credentials are incorrect" });
   }
 
-  const token = jwt.sign(userToLogin, SECRET_KEY);
+  const token = jwt.sign(user, SECRET_KEY);
   res.cookie("token", token, { httpOnly: true });
   return res.redirect("/");
 });
@@ -218,7 +203,8 @@ app.post("/new", isAuthenticated, (req, res) => {
     notes: req.body.notes,
     rating: 0,
     total_reviews: 0,
-    thumbnail: req.body.thumbnail, // Salvataggio del nuovo campo
+    thumbnail: req.body.thumbnail,
+    ratings: {},
   };
   movies.push(newMovie);
   writeData(movies);

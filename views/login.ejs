@@ -16,7 +16,7 @@
       <%- include("./partials/header.ejs") %>
       <h2 class="my-4">Login</h2>
       <% if (typeof error !== 'undefined') { %>
-      <div class="alert alert-danger"><%= error %></div>
+      <div class="bg-danger p-2 mb-4 rounded color-alpha"><%= error %></div>
       <% } %>
       <form action="/login" method="POST">
         <div class="mb-3">
