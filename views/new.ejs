@@ -19,6 +19,19 @@
         height: 10rem;
         margin-right: 1rem;
       }
+
+      #movie-dialog {
+        max-width: 60rem;
+        width: 940%;
+      }
+
+      #movie-dialog::backdrop {
+        background-color: rgba(var(--dr-delta-rgb), 0.3);
+      }
+
+      #movie-dialog img {
+        height: 25rem;
+      }
     </style>
   </head>
   <body class="container">
@@ -140,6 +153,19 @@
 
           if (req.ok) {
             alert("Film added Successfully");
+
+            // aggiorna il pulsante "Add" per mostrare che il film è stato aggiunto
+            const addMovieButton = document.getElementById(
+              `add-movie-button-${movie.id}`
+            );
+            addMovieButton.classList.remove("add-movie-button");
+            addMovieButton.innerHTML = `
+              <i class="fa-solid fa-check color-success"></i>
+              <span class="color-success">Added</span>
+            `;
+
+            // se il dialog è aperto, chiudilo
+            document.getElementById("movie-dialog").close();
           } else {
             alert("Error adding movie");
           }
@@ -170,17 +196,19 @@
                     "bg-gamma"
                   );
                   movieElement.innerHTML = `
-              <div class="d-flex align-items-center justify-content-start gap-3">
+              <div class="d-flex align-items-center justify-content-start gap-3" onclick="openMovieDialog(${
+                movie.id
+              }, ${movie.isAdded})">
                 <img src="https://image.tmdb.org/t/p/w200${
                   movie.poster_path
-                }" alt="${movie.title}" />
+                }" alt="${movie.title}"  />
                 <div>
                   <strong>${movie.title}</strong>
                   <div class="d-flex align-items-center justify-content-start gap-3">
                     <i class="opacity-70">${movie.release_date}</i>
-                    <button class="${
-                      movie.isAdded ? "" : `add-movie-button`
-                    }  bg-nu color-beta ml-2">
+                    <button id="add-movie-button-${movie.id}" class="${
+                    movie.isAdded ? "" : `add-movie-button`
+                  }  bg-nu color-beta ml-2">
                       ${
                         movie.isAdded
                           ? `<i class="fa-solid fa-check color-success"></i>`
@@ -195,11 +223,27 @@
                   </div>
                 </div>
               </div>
+     
+              <dialog id="movie-dialog" data-movie-id="${
+                movie.id
+              }" class="p-4 rounded border border-delta">
+                <h4 id="dialog-title" class="mb-3 color-alpha"></h4>
+                 <img id="dialog-poster" class="mb-3 d-block" src="" alt="Movie Poster" style="max-width: 100%; border-radius: 10px;">
+                <i id="dialog-release-date" class="d-block opacity-60"></i>
+                <p id="dialog-overview"></p>
+               
+                <div class="d-flex gap-2 mt-3" id="dialog-footer">
+                </div>
+              </dialog>
             `;
+
                   // Aggiungi l'evento click al pulsante "Add"
                   movieElement
                     .querySelector(".add-movie-button")
-                    ?.addEventListener("click", () => saveMovie(movie));
+                    ?.addEventListener("click", (e) => {
+                      e.stopPropagation();
+                      saveMovie(movie);
+                    });
                   searchResults.appendChild(movieElement);
                 });
               } else {
@@ -208,6 +252,64 @@
             });
         }
       });
+    </script>
+
+    <!-- appri il dialog con la informazzione dal film -->
+    <script>
+      async function openMovieDialog(movieId, isAdded) {
+        try {
+          const response = await fetch(`/movie-details/${movieId}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch movie details");
+          }
+          const movie = await response.json();
+
+          // Popola il dialog con i dati del film
+          document.getElementById("dialog-title").innerText = movie.title;
+          document.getElementById("dialog-release-date").innerText =
+            "Release Date: " + movie.release_date;
+          document.getElementById("dialog-overview").innerText = movie.overview;
+          document.getElementById(
+            "dialog-poster"
+          ).src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+
+          // Mostra il dialog
+          document.getElementById("movie-dialog").showModal();
+
+          // genera il html corretto per il pulsante secondo isAdded
+          const actionButtonToShow = isAdded
+            ? `
+            <button class="bg-success
+            color-beta">
+              <i class="fa-solid fa-check color-beta"></i>
+              <span class="color-beta">In your list</span>
+            </button>
+          `
+            : `
+            <button class="bg-zeta
+            color-alpha"  onclick='saveMovie(${JSON.stringify(movie).replace(
+              /"/g,
+              "&quot;"
+            )})''>
+              <i class="fa-solid fa-plus color-beta"></i>
+              <span class="color-beta">Add to list</span>
+              </button>
+              `;
+
+          const dialogFooter = document.getElementById("dialog-footer");
+
+          dialogFooter.innerHTML =
+            `
+            <button class="bg-danger color-alpha" onclick="document.getElementById('movie-dialog').close()">
+              <i class="fa-solid fa-xmark color-alpha"></i>
+              <span class="color-alpha">Close</span>
+            </button>
+          ` + actionButtonToShow;
+        } catch (error) {
+          console.error("Error fetching movie data:", error);
+          alert("Error loading movie details. Please try again later.");
+        }
+      }
     </script>
 
     <!--  renderizza il thumbnail quando il input cambii -->

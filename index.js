@@ -15,10 +15,6 @@ const app = express();
 const TMBD_READ_ACCESS_TOKEN = process.env.TMBD_READ_ACCESS_TOKEN;
 const SECRET_KEY = process.env.SECRET_KEY || "defaultsecret";
 const PORT = process.env.PORT || 3000;
-const USER_CREDENTIALS = {
-  username: process.env.USERNAME,
-  password: process.env.PASSWORD,
-};
 
 // Configurazione
 app.set("view engine", "ejs");
@@ -312,6 +308,35 @@ app.post("/add-from-tmdb", isAuthenticated, async (req, res) => {
   movies.push(newMovie);
   writeData(movies);
   res.status(201).json(newMovie);
+});
+
+// mostra utti i dettagli di un film
+app.get("/movie-details/:id", async (req, res) => {
+  const movieId = req.params.id;
+  const url = `https://api.themoviedb.org/3/movie/${movieId}?language=en-US`;
+
+  const options = {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${TMBD_READ_ACCESS_TOKEN}`,
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      return res
+        .status(response.status)
+        .json({ error: "Failed to fetch movie details" });
+    }
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching movie details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 /***************************************************************
