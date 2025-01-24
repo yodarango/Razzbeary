@@ -65,22 +65,23 @@ app.use((req, res, next) => {
 });
 
 // Percorso del database JSON
-const dbFile =
+const moviesDBFile =
   process.env.ENVIRONMENT === "development"
     ? "movies.test.json"
     : "movies.json";
-const dbPath = path.join(__dirname, dbFile);
+const moviesTable = path.join(__dirname, moviesDBFile);
+const usersTable = path.join(__dirname, "users.json");
 
 // Funzione per leggere i dati
-const readData = () => {
-  if (!fs.existsSync(dbPath)) return [];
-  const data = fs.readFileSync(dbPath);
+const readData = (path) => {
+  if (!fs.existsSync(path)) return [];
+  const data = fs.readFileSync(path);
   return JSON.parse(data);
 };
 
 // Funzione per scrivere i dati
 const writeData = (data) => {
-  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+  fs.writeFileSync(moviesTable, JSON.stringify(data, null, 2));
 };
 
 /***************************************************************
@@ -102,7 +103,7 @@ app.get("/logout", (req, res) => {
 
 // Rotta per modificare un film esistente (protetta)
 app.get("/edit/:id", isAuthenticated, (req, res) => {
-  const movies = readData();
+  const movies = readData(moviesTable);
   const movie = movies.find((m) => m.id === parseInt(req.params.id));
   if (!movie) return res.status(404).send("Film non trovato");
   res.render("edit", { movie });
@@ -145,7 +146,7 @@ app.get("/new", isAuthenticated, (req, res) => {
 
 // Rotta per visualizzare un film
 app.get("/:id", isAuthenticated, (req, res) => {
-  const movies = readData();
+  const movies = readData(moviesTable);
   const movie = movies.find((m) => m.id === parseInt(req.params.id));
   if (!movie) return res.status(404).send("Film non trovato");
   res.render("show", { movie });
@@ -153,7 +154,7 @@ app.get("/:id", isAuthenticated, (req, res) => {
 
 // Rotta principale: mostra tutti i film
 app.get("/", isAuthenticated, (req, res) => {
-  const movies = readData();
+  const movies = readData(moviesTable);
   res.render("index", {
     movies,
   });
@@ -165,22 +166,43 @@ app.get("/", isAuthenticated, (req, res) => {
 // Rotta per il login
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
-  if (
-    username.toLocaleLowerCase() ===
-      USER_CREDENTIALS.username.toLocaleLowerCase() &&
-    password === USER_CREDENTIALS.password
-  ) {
-    const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
-    res.cookie("token", token, { httpOnly: true });
-    return res.redirect("/");
-  } else {
-    res.render("login", { error: "Credenziali non valide" });
+
+  const users = readData(usersTable);
+
+  const user = users.find(
+    (u) =>
+      u.username.toLocaleLowerCase() === username.toLocaleLowerCase() &&
+      u.password === password
+  );
+
+  const devLogin =
+    password === process.env.USERNAME && process.env.PASSWORD === password;
+
+  const canLogin =
+    process.env.ENVIRONMENT === "development" ? devLogin : !!user;
+
+  const devUser = {
+    username: process.env.USERNAME,
+    password: process.env.PASSWORD,
+    id: 0,
+  };
+
+  const userToLogin =
+    process.env.ENVIRONMENT === "development" ? devUser : user;
+
+  if (!canLogin) {
+    console.log("Login failed. Invalid credentials");
+    return res.render("login", { error: "Your credentials are incorrect" });
   }
+
+  const token = jwt.sign(userToLogin, SECRET_KEY);
+  res.cookie("token", token, { httpOnly: true });
+  return res.redirect("/");
 });
 
 // Rotta per aggiungere un nuovo film (protetta)
 app.post("/new", isAuthenticated, (req, res) => {
-  const movies = readData();
+  const movies = readData(moviesTable);
   // rcreate a random Id from letter and numbers
   const id = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     .split("")
@@ -205,9 +227,12 @@ app.post("/new", isAuthenticated, (req, res) => {
 
 // Rotta per aggiornare la valutazione di un film (protetta)
 app.post("/rate/:id", isAuthenticated, (req, res) => {
-  let movies = readData();
+  let movies = readData(moviesTable);
   const movieId = parseInt(req.params.id);
   const newRating = parseInt(req.body.rating);
+
+  // get the user rating the movie from the token
+  const user = jwt.verify(req.cookies.token, SECRET_KEY);
 
   movies = movies.map((movie) => {
     if (movie.id === movieId) {
@@ -223,6 +248,8 @@ app.post("/rate/:id", isAuthenticated, (req, res) => {
         (movie.total_reviews + 1);
       movie.rating = Math.round(movie.rating * 10) / 10; // Arrotonda a una cifra decimale
       movie.total_reviews += 1; // Incrementa il numero totale di recensioni
+      if (!movie.ratings) movie.ratings = {};
+      movie.ratings[user.username] = newRating;
     }
     return movie;
   });
@@ -233,7 +260,7 @@ app.post("/rate/:id", isAuthenticated, (req, res) => {
 
 // Rotta per aggiornare un film esistente (protetta)
 app.post("/edit/:id", isAuthenticated, (req, res) => {
-  let movies = readData();
+  let movies = readData(moviesTable);
   movies = movies.map((m) => {
     if (m.id === parseInt(req.params.id)) {
       m.title = req.body.title;
@@ -248,7 +275,7 @@ app.post("/edit/:id", isAuthenticated, (req, res) => {
 
 // Rotta per eliminare un film (protetta)
 app.post("/delete/:id", isAuthenticated, (req, res) => {
-  let movies = readData();
+  let movies = readData(moviesTable);
   movies = movies.filter((m) => m.id !== parseInt(req.params.id));
   writeData(movies);
   res.redirect("/");
@@ -262,7 +289,7 @@ app.post("/add-from-tmdb", isAuthenticated, async (req, res) => {
     return res.status(400).json({ error: "ID del film mancante" });
   }
 
-  const movies = readData();
+  const movies = readData(moviesTable);
 
   // const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US`;
   const thumbnail = req.body.thumbnail;

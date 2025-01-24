@@ -2,9 +2,14 @@
   {
     "id": 671,
     "title": "Harry Potter and the Philosopher's Stone",
-    "total_reviews": 0,
+    "total_reviews": 2,
     "total_rating": 0,
-    "thumbnail": "/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg"
+    "thumbnail": "/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg",
+    "rating": 6,
+    "ratings": {
+      "0": 8,
+      "dev": 4
+    }
   },
   {
     "id": 672,
