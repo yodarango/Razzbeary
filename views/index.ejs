@@ -120,6 +120,62 @@
 
     <%- include('./partials/footer'); %> <%- include('./partials/nav'); %>
 
+    <!-- send the film rating -->
+    <script>
+      function submitRating(ev, movieId) {
+        ev.preventDefault();
+        const ratingValue = document.getElementById(`rating-${movieId}`).value;
+
+        fetch(`/rate/${movieId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ rating: ratingValue }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.movie?.id) {
+              // Mostra un alert di successo
+              alert("Rating submitted successfully!");
+
+              // Aggiorna il valore visualizzato dello slider
+              document.getElementById("slider-value-" + movieId).innerText =
+                ratingValue;
+
+              // Chiudi il dialog di valutazione
+              const dialog = document.getElementById(
+                `rating-dialog-${movieId}`
+              );
+              if (dialog) {
+                dialog.close();
+              }
+
+              // agiorna il rating nella card
+              const ratingNumber = document.querySelector(
+                `#total-movie-rating-${movieId}`
+              );
+              if (ratingNumber) {
+                ratingNumber.innerText = data.movie.rating;
+              }
+
+              const numberOfRatings = document.querySelector(
+                `#number-of-movie-ratings-${movieId}`
+              );
+              if (numberOfRatings) {
+                numberOfRatings.innerText = `(Total: ${data.movie.total_reviews})`;
+              }
+            } else {
+              alert("Failed to submit rating. Please try again.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error submitting rating:", error);
+            alert("An error occurred while submitting your rating.");
+          });
+      }
+    </script>
+
     <script>
       let allMovies = <%- JSON.stringify(movies) %>; // Full movie list
       let filteredMovies = allMovies; // Movies after search filtering
@@ -147,11 +203,11 @@
                   <a href="/${movie.id}">${movie.title}</a>
                 </h4>
                 <div class="movie-rating mb-3 d-flex align-items-center gap-2 justify-content-start">
-                  <span class="rating-number bg-iota d-inline-flex align-items-center justify-content-center">
+                  <span class="rating-number bg-iota d-inline-flex align-items-center justify-content-center" id="total-movie-rating-${movie.id}">
                     ${movie.rating > 0 ? movie.rating : "0"}
                   </span>
                   <i class="fa fa-heart fs-3 color-iota"></i>
-                  <i class="opacity-60 d-block">(Total: ${movie.total_reviews > 0 ? movie.total_reviews : "0"})</i>
+                  <i class="opacity-60 d-block" id="number-of-movie-ratings-${movie.id}" >(Total: ${movie.total_reviews > 0 ? movie.total_reviews : "0"})</i>
                 </div>
                 <div class="d-flex align-items-center justify-content-center gap-2">
                   <a href="/edit/${movie.id}" class="p-2 rounded bg-delta w-100 d-flex align-items-center justify-content-center gap-2 color-alpha">
@@ -170,7 +226,7 @@
                 </div>
                 <dialog id="rating-dialog-${movie.id}" class="rating-dialog p-4 rounded border border-delta">
                   <h4 class="mb-3 color-alpha">Rating: ${movie.title}</h4>
-                  <form method="POST" action="/rate/${movie.id}">
+                  <form onsubmit="return submitRating(event, ${movie.id})">
                     <input type="range" id="rating-${movie.id}" name="rating" min="1" max="10" step="0.1" value="${movie.rating}" class="slider"
                       oninput="document.getElementById('slider-value-${movie.id}').innerText = this.value;">
                     <span id="slider-value-${movie.id}" class="slider-value">${movie.rating > 0 ? movie.rating : "0"}</span>
@@ -196,19 +252,6 @@
         document.getElementById('prev-btn').disabled = currentPage === 1;
         document.getElementById('next-btn').disabled = endIndex >= filteredMovies.length;
       }
-
-      // Questo genera un quore per ogni punto entero della evalutazione nella recensione
-      // function generateRatingHearts(rating) {
-      //   let hearts = '';
-      //   for (let i = 1; i <= 10; i++) {
-      //     if (i <= rating) {
-      //       hearts += '<i class="fa fa-heart fs-6 color-iota me-1"></i>';
-      //     } else {
-      //       hearts += '<i class="fa fa-heart fs-6 color-alpha opacity-50 me-1"></i>';
-      //     }
-      //   }
-      //   return hearts;
-      // }
 
       function changePage(step) {
         currentPage += step;

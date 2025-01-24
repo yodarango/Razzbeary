@@ -215,33 +215,42 @@ app.post("/new", isAuthenticated, (req, res) => {
 app.post("/rate/:id", isAuthenticated, (req, res) => {
   let movies = readData(moviesTable);
   const movieId = parseInt(req.params.id);
-  const newRating = parseInt(req.body.rating);
+  const newRating = parseFloat(req.body.rating);
 
   // get the user rating the movie from the token
   const user = jwt.verify(req.cookies.token, SECRET_KEY);
 
+  let selectedMovie;
+  let isNewReview = true;
   movies = movies.map((movie) => {
     if (movie.id === movieId) {
+      // verifica se l'utente ha già recensito il film
+      if (movie.ratings && movie.ratings[user.username]) {
+        isNewReview = false;
+      }
+
       // Se il film non ha ancora recensioni, inizializza i valori
       if (!movie.total_reviews) {
         movie.total_reviews = 0;
         movie.rating = 0;
       }
 
-      // Calcola la nuova media: (rating attuale * numero recensioni + nuova valutazione) / (numero recensioni + 1)
-      movie.rating =
-        (movie.rating * movie.total_reviews + newRating) /
-        (movie.total_reviews + 1);
-      movie.rating = Math.round(movie.rating * 10) / 10; // Arrotonda a una cifra decimale
-      movie.total_reviews += 1; // Incrementa il numero totale di recensioni
       if (!movie.ratings) movie.ratings = {};
       movie.ratings[user.username] = newRating;
+      movie.total_reviews = Object.keys(movie.ratings).length;
+
+      // Questo deve venire dopo il calcolo di total_reviews per evitare di contare la recensione dell'utente due volte
+      movie.rating = (movie.rating + newRating) / movie.total_reviews;
+      movie.rating = Math.round(movie.rating * 10) / 10;
+
+      selectedMovie = movie;
     }
+
     return movie;
   });
 
   writeData(movies);
-  res.redirect("/");
+  res.send({ movie: selectedMovie, isNewReview }).status(200);
 });
 
 // Rotta per aggiornare un film esistente (protetta)
