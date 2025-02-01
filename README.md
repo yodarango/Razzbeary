@@ -109,6 +109,7 @@ cleanflix/
 # TODO
 
 - Dockerize it
+- Add deploy sh
 
 # BUGS
 
