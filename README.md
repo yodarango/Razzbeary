@@ -108,5 +108,6 @@ cleanflix/
 
 # TODO
 
-- add search
-- add pagination
+# BUGS
+
+- Quando un film viene aggiunto, il modal di informazione dil film non viene aggiornato
