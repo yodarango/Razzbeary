@@ -108,6 +108,8 @@ cleanflix/
 
 # TODO
 
+- Dockerize it
+
 # BUGS
 
 - Quando un film viene aggiunto, il modal di informazione dil film non viene aggiornato
