@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/zsh
+
+source ~/.zshrc
 
 # Check if a commit message was provided
 if [ "$#" -ne 1 ]; then
