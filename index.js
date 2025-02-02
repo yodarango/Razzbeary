@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // PWA Config
 app.get("/manifest.json", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/manifest.json"));
+  res.sendFile(path.join(__dirname, "manifest.json"));
 });
 
 app.get("/service-worker.js", (req, res) => {
@@ -158,13 +158,16 @@ app.get("/:id", isAuthenticated, (req, res) => {
 });
 
 // Rotta principale: mostra tutti i film
-app.get("/", isAuthenticated, (req, res) => {
+app.get("/", (req, res) => {
   const movies = readData(moviesTable);
+  // get the user rating the movie from the token
+  const user = jwt.verify(req.cookies.token, SECRET_KEY) || null;
+
   res.render("index", {
     movies,
+    user,
   });
 });
-
 /***************************************************************
  * POST REQUESTS
  ***************************************************************/

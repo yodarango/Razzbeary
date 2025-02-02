@@ -1,11 +1,5 @@
-const CACHE_NAME = "cleanflix-cache-v1";
-const urlsToCache = [
-  "/",
-  "/index.html",
-  "/public/cleanflix.webp",
-  "/public/css/style.css",
-  "/public/js/script.js",
-];
+const CACHE_NAME = "razzbeary-v1";
+const urlsToCache = ["/", "/index.html", "/razzbeary.webp"];
 
 // Installazione del service worker e caching delle risorse statiche
 self.addEventListener("install", (event) => {

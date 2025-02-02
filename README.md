@@ -88,7 +88,7 @@ cleanflix/
 │-- public/
 │ ├── css/ # Fogli di stile CSS
 │ ├── js/ # File JavaScript lato client
-│ ├── cleanflix.webp # Immagine usata per favicon e social media
+│ ├── razzbeary.webp # Immagine usata per favicon e social media
 │ ├── manifest.json # Configurazione PWA
 │ ├── service-worker.js # Service worker per caching offline
 │
@@ -114,3 +114,4 @@ cleanflix/
 # BUGS
 
 - Quando un film viene aggiunto, il modal di informazione dil film non viene aggiornato
+- all pages besides "/" pull the browser in apple bookmark

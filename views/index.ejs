@@ -2,16 +2,14 @@
 <html>
   <head>
     <%- include("./partials/head.ejs") %>
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/public/manifest.json" />
 
     <!-- Service Worker -->
     <!-- non utilizato per il momento -->
-    <!-- <script>
+    <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker
-            .register("/public/service-worker.js")
+            .register("/service-worker.js")
             .then((registration) => {
               console.log(
                 "Service Worker registrato con successo:",
@@ -23,20 +21,9 @@
             });
         });
       }
-    </script> -->
+    </script>
 
-    <!-- PWA meta tags -->
-    <meta name="theme-color" content="#5200ff" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="CleanFlix" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
-    <link rel="apple-touch-icon" href="/public/cleanflix.webp" />
-
-    <title>Milagrito's home theater</title>
+    <title>CleanFlix</title>
     <style>
       main {
         width: 94%;
@@ -85,13 +72,18 @@
       <!-- Search Bar -->
       <div class="mb-4">
         <p class="mb-2 opacity-60">Search all <%=movies.length%> movies</p>
-        <input
-          type="text"
-          id="search-input"
-          class="w-100 p-2 border border-iota rounded"
-          placeholder="Search movies..."
-          oninput="filterMovies()"
-        />
+        <div class="d-flex gap-3 align-items-center justify-content-center">
+          <input
+            type="text"
+            id="search-input"
+            class="w-100 p-2 border border-iota rounded"
+            placeholder="Search movies..."
+            oninput="filterMovies()"
+          />
+          <button id="filter-by-unrated" class="bg-nu p-0" onclick="filterMoviesByRating()"">
+            <i class="fa-regular fa-star fs-3"></i>
+          </button>
+        </div>
       </div>
 
       <!-- Movies Container -->
@@ -182,6 +174,8 @@
       let currentPage = 1;
       const itemsPerPage = 20;
 
+      const loggedInUser = <%- JSON.stringify(user) %>;
+
       function renderMovies() {
         const container = document.getElementById('movies-container');
         container.innerHTML = '';
@@ -262,6 +256,37 @@
       function filterMovies() {
         const query = document.getElementById('search-input').value.toLowerCase();
         filteredMovies = allMovies.filter(movie => movie.title.toLowerCase().includes(query));
+        currentPage = 1;
+        renderMovies();
+      }
+
+      let unrated = true;
+
+      //  Will show all the movies that have not been rated by the current logged in user
+      function filterMoviesByRating() {
+        const user = loggedInUser;
+        console.log(user);
+        const filterBtn = document.getElementById('filter-by-unrated');
+
+        if (unrated) {
+          filterBtn.classList.add('bg-zeta');
+          //unrated by the current logged in user only
+          const query = document.getElementById('search-input').value.toLowerCase();
+          filteredMovies = allMovies.filter(movie => {
+            if (!movie.ratings) {
+              return true;
+            }
+
+            return  !(movie.ratings[user.username] > -1)
+          });
+
+          unrated = false;
+        } else {
+          filterBtn.classList.remove('bg-zeta');
+          const query = document.getElementById('search-input').value.toLowerCase();
+          filteredMovies = allMovies.filter(movie => movie.title.toLowerCase().includes(query));
+          unrated = true;
+        }
         currentPage = 1;
         renderMovies();
       }
