@@ -99,10 +99,15 @@ app.get("/logout", (req, res) => {
 
 // Rotta per modificare un film esistente (protetta)
 app.get("/edit/:id", isAuthenticated, (req, res) => {
+  // get the user rating the movie from the token
+  let user = null;
+  if (req.cookies.token) {
+    user = jwt.verify(req.cookies.token, SECRET_KEY);
+  }
   const movies = readData(moviesTable);
   const movie = movies.find((m) => m.id === parseInt(req.params.id));
   if (!movie) return res.status(404).send("Film non trovato");
-  res.render("edit", { movie });
+  res.render("edit", { movie, user });
 });
 
 // Rotta per cercare film tramite TMDB
@@ -127,6 +132,12 @@ app.get("/search", isAuthenticated, async (req, res) => {
     },
   };
 
+  // get the user rating the movie from the token
+  let user = null;
+  if (req.cookies.token) {
+    user = jwt.verify(req.cookies.token, SECRET_KEY);
+  }
+
   try {
     const response = await fetch(url, options);
     const data = await response.json();
@@ -134,7 +145,7 @@ app.get("/search", isAuthenticated, async (req, res) => {
     // check if the movie is already in the database
     const results = data.results.map((movie) => {
       const isAdded = movieIds.includes(movie.id);
-      return { ...movie, isAdded };
+      return { ...movie, isAdded, user };
     });
 
     res.json({ results });
@@ -146,15 +157,26 @@ app.get("/search", isAuthenticated, async (req, res) => {
 
 // Rotta per il form di creazione di un nuovo film (protetta)
 app.get("/new", isAuthenticated, (req, res) => {
-  res.render("new");
+  // get the user rating the movie from the token
+  let user = null;
+  if (req.cookies.token) {
+    user = jwt.verify(req.cookies.token, SECRET_KEY);
+  }
+  res.render("new", { user });
 });
 
 // Rotta per visualizzare un film
 app.get("/:id", isAuthenticated, (req, res) => {
+  // get the user rating the movie from the token
+  let user = null;
+  if (req.cookies.token) {
+    user = jwt.verify(req.cookies.token, SECRET_KEY);
+  }
+
   const movies = readData(moviesTable);
   const movie = movies.find((m) => m.id === parseInt(req.params.id));
   if (!movie) return res.status(404).send("Film non trovato");
-  res.render("show", { movie });
+  res.render("show", { movie, user });
 });
 
 // Rotta principale: mostra tutti i film
