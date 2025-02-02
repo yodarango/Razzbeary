@@ -282,6 +282,10 @@
       //  Will show all the movies that have not been rated by the current logged in user
       function filterUnratedMovies() {
         const user = loggedInUser;
+
+        if (!user) {
+          return;
+        }
         const filterBtn = document.getElementById('filter-by-unrated');
 
         filterBtn.classList.add('color-zeta');
@@ -297,7 +301,6 @@
       }
 
       function filterMoviesByRating() {
-        const user = loggedInUser;
         const filterBtn = document.getElementById('filter-by-unrated');
 
         if (unrated) {

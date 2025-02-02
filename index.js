@@ -161,7 +161,10 @@ app.get("/:id", isAuthenticated, (req, res) => {
 app.get("/", (req, res) => {
   const movies = readData(moviesTable);
   // get the user rating the movie from the token
-  const user = jwt.verify(req.cookies.token, SECRET_KEY) || null;
+  let user = null;
+  if (req.cookies.token) {
+    user = jwt.verify(req.cookies.token, SECRET_KEY);
+  }
 
   res.render("index", {
     movies,
