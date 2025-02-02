@@ -1,10 +1,10 @@
-# CleanFlix
+# Razzbeary
 
-CleanFlix è un'applicazione web che consente agli utenti di scoprire, valutare e organizzare la loro libreria di film preferiti in modo semplice e intuitivo. Il progetto è sviluppato e mantenuto da **Daniel Rangel** e ospitato su [cleanflix.shrood.app](https://cleanflix.shrood.app).
+Razzbeary è un'applicazione web che consente agli utenti di scoprire, valutare e organizzare la loro libreria di film preferiti in modo semplice e intuitivo. Il progetto è sviluppato e mantenuto da **Daniel Rangel** e ospitato su [Razzbeary.shrood.app](https://Razzbeary.shrood.app).
 
 ## Scopo del Progetto
 
-L'obiettivo principale di CleanFlix è offrire una piattaforma user-friendly per:
+L'obiettivo principale di Razzbeary è offrire una piattaforma user-friendly per:
 
 - **Aggiungere nuovi film** alla propria libreria.
 - **Modificare e aggiornare** le informazioni sui film.
@@ -16,7 +16,7 @@ L'obiettivo principale di CleanFlix è offrire una piattaforma user-friendly per
 
 ## Tecnologie Utilizzate
 
-CleanFlix è costruito utilizzando le seguenti tecnologie:
+Razzbeary è costruito utilizzando le seguenti tecnologie:
 
 - **Backend:**
 
@@ -47,8 +47,8 @@ CleanFlix è costruito utilizzando le seguenti tecnologie:
 ### 1. Clona il repository
 
 ```bash
-git clone https://github.com/danielrangel/cleanflix.git
-cd cleanflix
+git clone https://github.com/danielrangel/Razzbeary.git
+cd Razzbeary
 ```
 
 ### 2. Configura le variabili d'ambiente
@@ -66,14 +66,14 @@ SECRET_KEY=secret
 
 ### 3. Docker
 
-docker build -t cleanflix-app .
-docker run -p 8004:8004 --env-file .env cleanflix-app
+docker build -t Razzbeary-app .
+docker run -p 8004:8004 --env-file .env Razzbeary-app
 
 version: '3.8'
 
 Esecuzione con Docker Compose (Opzionale)
 services:
-cleanflix:
+Razzbeary:
 build: .
 ports: - "3000:3000"
 env_file: - .env
@@ -84,7 +84,7 @@ docker-compose up --build
 
 ## Struttura del Progetto
 
-cleanflix/
+Razzbeary/
 │-- public/
 │ ├── css/ # Fogli di stile CSS
 │ ├── js/ # File JavaScript lato client
@@ -108,10 +108,9 @@ cleanflix/
 
 # TODO
 
-- Dockerize it
-- Add deploy sh
+- Find a better way to recreate DOM elements with JS
 
 # BUGS
 
-- Quando un film viene aggiunto, il modal di informazione dil film non viene aggiornato
+- Quando un film viene aggiunto, il modal di informazione dil film non viene aggiornato. Implementare il stesso modo di aggiornamento da "/" dove i film sono renderizatti dopo essere aggiunti
 - all pages besides "/" pull the browser in apple bookmark

@@ -23,7 +23,7 @@
       }
     </script>
 
-    <title>CleanFlix</title>
+    <title>Razzbeary</title>
     <style>
       main {
         width: 94%;
@@ -71,7 +71,7 @@
 
       <!-- Search Bar -->
       <div class="mb-4">
-        <p class="mb-2 opacity-60">Search all <%=movies.length%> movies</p>
+        <p id="totality-of-movies-shown" class="mb-2 opacity-60">Search all <%=movies.length%> movies</p>
         <div class="d-flex gap-3 align-items-center justify-content-center">
           <input
             type="text"
@@ -81,7 +81,7 @@
             oninput="filterMovies()"
           />
           <button id="filter-by-unrated" class="bg-nu p-0" onclick="filterMoviesByRating()"">
-            <i class="fa-regular fa-star fs-3"></i>
+            <i class="fa-regular fa-star fs-1"></i>
           </button>
         </div>
       </div>
@@ -114,6 +114,13 @@
 
     <!-- send the film rating -->
     <script>
+      let allMovies = <%- JSON.stringify(movies) %>; // Full movie list
+      let filteredMovies = allMovies; // Movies after search filtering
+      let currentPage = 1;
+      const itemsPerPage = 20;
+
+      const loggedInUser = <%- JSON.stringify(user) %>;
+
       function submitRating(ev, movieId) {
         ev.preventDefault();
         const ratingValue = document.getElementById(`rating-${movieId}`).value;
@@ -131,6 +138,10 @@
               // Mostra un alert di successo
               alert("Rating submitted successfully!");
 
+              // trova il film nella lista di film e aggiorna il rating
+              const movieIndex = allMovies.findIndex((movie) => movie.id === movieId);
+              allMovies[movieIndex] = data.movie;
+
               // Aggiorna il valore visualizzato dello slider
               document.getElementById("slider-value-" + movieId).innerText =
                 ratingValue;
@@ -139,24 +150,30 @@
               const dialog = document.getElementById(
                 `rating-dialog-${movieId}`
               );
+
               if (dialog) {
                 dialog.close();
               }
 
-              // agiorna il rating nella card
-              const ratingNumber = document.querySelector(
-                `#total-movie-rating-${movieId}`
-              );
-              if (ratingNumber) {
-                ratingNumber.innerText = data.movie.rating;
-              }
+              // rirenderizza i film
+              filterUnratedMovies();
+              renderMovies();
 
-              const numberOfRatings = document.querySelector(
-                `#number-of-movie-ratings-${movieId}`
-              );
-              if (numberOfRatings) {
-                numberOfRatings.innerText = `(Total: ${data.movie.total_reviews})`;
-              }
+              // lascia qui fino che confirmi che funziona
+              // // agiorna il rating nella card
+              // const ratingNumber = document.querySelector(
+              //   `#total-movie-rating-${movieId}`
+              // );
+              // if (ratingNumber) {
+              //   ratingNumber.innerText = data.movie.rating;
+              // }
+
+              // const numberOfRatings = document.querySelector(
+              //   `#number-of-movie-ratings-${movieId}`
+              // );
+              // if (numberOfRatings) {
+              //   numberOfRatings.innerText = `(Total: ${data.movie.total_reviews})`;
+              // }
             } else {
               alert("Failed to submit rating. Please try again.");
             }
@@ -166,17 +183,17 @@
             alert("An error occurred while submitting your rating.");
           });
       }
-    </script>
 
-    <script>
-      let allMovies = <%- JSON.stringify(movies) %>; // Full movie list
-      let filteredMovies = allMovies; // Movies after search filtering
-      let currentPage = 1;
-      const itemsPerPage = 20;
-
-      const loggedInUser = <%- JSON.stringify(user) %>;
-
+      /**************************************************************************************
+       * Funzione molto importante. Si occupa di renderizzare i film nella pagina principale
+       * e di gestire la paginazione. I film renderizzati saranno sempre secondo il valore
+       * di currentPage e itemsPerPage e filteredMovies. Questa funzione non 
+       * deve fare altra cosa che renderizzare i film.
+       * **********************************************************************************/
       function renderMovies() {
+        // aggiorna il totale dei film visualizzati
+        updateTotalityOfMoviesShown();
+
         const container = document.getElementById('movies-container');
         container.innerHTML = '';
 
@@ -263,32 +280,40 @@
       let unrated = true;
 
       //  Will show all the movies that have not been rated by the current logged in user
+      function filterUnratedMovies() {
+        const user = loggedInUser;
+        const filterBtn = document.getElementById('filter-by-unrated');
+
+        filterBtn.classList.add('color-zeta');
+        //unrated by the current logged in user only
+        const query = document.getElementById('search-input').value.toLowerCase();
+        filteredMovies = allMovies.filter(movie => {
+          if (!movie.ratings) {
+            return true;
+          }
+
+          return  !(movie.ratings[user.username] > -1)
+        });
+      }
+
       function filterMoviesByRating() {
         const user = loggedInUser;
-        console.log(user);
         const filterBtn = document.getElementById('filter-by-unrated');
 
         if (unrated) {
-          filterBtn.classList.add('bg-zeta');
-          //unrated by the current logged in user only
-          const query = document.getElementById('search-input').value.toLowerCase();
-          filteredMovies = allMovies.filter(movie => {
-            if (!movie.ratings) {
-              return true;
-            }
-
-            return  !(movie.ratings[user.username] > -1)
-          });
-
+          filterUnratedMovies();
           unrated = false;
         } else {
-          filterBtn.classList.remove('bg-zeta');
-          const query = document.getElementById('search-input').value.toLowerCase();
-          filteredMovies = allMovies.filter(movie => movie.title.toLowerCase().includes(query));
+          filteredMovies = allMovies;
           unrated = true;
+          filterBtn.classList.remove('color-zeta');
         }
         currentPage = 1;
         renderMovies();
+      }
+
+      function updateTotalityOfMoviesShown() {
+        document.getElementById('totality-of-movies-shown').innerText = `Search all ${filteredMovies.length} movies`;
       }
 
       renderMovies();

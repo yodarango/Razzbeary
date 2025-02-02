@@ -1,7 +1,7 @@
 {
-  "name": "CleanFlix",
-  "short_name": "CleanFlix",
-  "description": "Scopri e valuta i tuoi film preferiti con CleanFlix.",
+  "name": "Razzbeary",
+  "short_name": "Razzbeary",
+  "description": "Scopri e valuta i tuoi film preferiti con Razzbeary.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

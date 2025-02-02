@@ -1,11 +1,11 @@
 {
-  "name": "movie-review-app",
+  "name": "razzbeary",
   "version": "1.0.0",
   "description": "An app to review and manage watched movies",
   "main": "app.js",
   "scripts": {
     "start": "node index.js",
-    "pm2": "pm2 start --name=cleanflix index.js --watch",
+    "pm2": "pm2 start --name=razzbeary index.js --watch",
     "dev": "nodemon index.js"
   },
   "dependencies": {

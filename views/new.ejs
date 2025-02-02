@@ -27,7 +27,7 @@
       }
       #movie-dialog {
         max-width: 60rem;
-        width: 940%;
+        width: 94%;
       }
 
       #movie-dialog::backdrop {
@@ -91,7 +91,7 @@
         <!-- Form per aggiungere un nuovo film manualmente -->
         <form action="/new" method="POST">
           <div class="mb-4">
-            <label>Titolo:</label>
+            <label>Title:</label>
             <input
               type="text"
               name="title"
@@ -100,7 +100,7 @@
             />
           </div>
           <div class="mb-4">
-            <label>Miniatura (URL dell'immagine):</label>
+            <label>Thumbnail:</label>
             <input
               type="text"
               name="thumbnail"
@@ -118,7 +118,7 @@
             ></textarea>
           </div>
           <button type="submit" class="mt-4 w-100 bg-success color-beta">
-            Aggiungi Film
+            Add a film
           </button>
         </form>
       </div>
@@ -184,6 +184,20 @@
               <span class="color-success">Added</span>
             `;
 
+            // Agiorna anche il pulsante nel dialog
+            const dialogFooter = document.getElementById("dialog-footer");
+            dialogFooter.innerHTML = `
+            <button class="bg-danger color-alpha" onclick="document.getElementById('movie-dialog').close()">
+              <i class="fa-solid fa-xmark color-alpha"></i>
+              <span class="color-alpha">Close</span>
+            </button>
+              <button class="bg-success color-beta">
+                <i class="fa-solid fa-check color-beta"></i>
+                <span class="color-beta">In your list</span>
+              </button>
+            `;
+
+            console.log(dialogFooter);
             // se il dialog è aperto, chiudilo
             document.getElementById("movie-dialog").close();
           } else {
