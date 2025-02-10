@@ -381,6 +381,10 @@ app.post("/add-from-tmdb", isAuthenticated, async (req, res) => {
   if (!id) {
     return res.status(400).json({ error: "ID del film mancante" });
   }
+  // assicurati che il film non sia già presente
+  if (readData(moviesTable).find((m) => m.id === id)) {
+    return res.status(400).json({ error: "Il film è già presente" });
+  }
 
   const movies = readData(moviesTable);
 
