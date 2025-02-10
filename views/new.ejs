@@ -62,6 +62,7 @@
               id="search-query"
               class="w-100 d-block p-4 color-alpha bg-beta border border-iota rounded"
               placeholder="Look for a film"
+              onkeydown="handleKeyDown(event)"
             />
             <button
               class="bg-nu color-alpha p-0"
@@ -70,7 +71,11 @@
               <i class="fa-solid fa-xmark fs-1"></i>
             </button>
           </div>
-          <button id="search-button" class="mt-2 w-100 bg-success color-beta">
+          <button
+            id="search-button"
+            class="mt-2 w-100 bg-success color-beta"
+            onclick="handleSearch()"
+          >
             Search
           </button>
         </div>
@@ -125,7 +130,7 @@
     </main>
     <%- include("./partials/nav.ejs") %> <%- include("./partials/footer.ejs") %>
 
-    <!-- clean input -->
+    <!-- AUTO-AGGIUNTO: clean input -->
     <script>
       function cleanCurrentSearch() {
         document.getElementById("search-query").value = "";
@@ -133,7 +138,7 @@
       }
     </script>
 
-    <!-- render the specific tab based on the search query -->
+    <!-- AUTO-AGGIUNTO: render the specific tab based on the search query -->
     <script>
       const searchParams = new URLSearchParams(window.location.search);
       const add = searchParams.get("add");
@@ -153,6 +158,75 @@
       const searchButton = document.getElementById("search-button");
       const searchQuery = document.getElementById("search-query");
       const searchResults = document.getElementById("search-results");
+      let movies = [];
+
+      // Renderizza i film secondo a le fil in []movies
+      function renderMovies() {
+        // rimove la vechia lista
+        searchResults.innerHTML = "";
+        movies.forEach((movie) => {
+          const movieElement = document.createElement("div");
+          movieElement.classList.add(
+            "movie-result",
+            "mb-2",
+            "p-2",
+            "border",
+            "border-iota",
+            "rounded",
+            "bg-gamma"
+          );
+          movieElement.innerHTML = `
+                <div class="d-flex align-items-center justify-content-start gap-3" onclick="openMovieDialog(${
+                  movie.id
+                }, ${movie.isAdded})">
+                  <img src="https://image.tmdb.org/t/p/w200${
+                    movie.poster_path
+                  }" alt="${movie.title}"  />
+                  <div>
+                    <strong>${movie.title}</strong>
+                    <div class="d-flex align-items-center justify-content-start gap-3">
+                      <i class="opacity-70">${movie.release_date}</i>
+                      <button id="add-movie-button-${movie.id}" class="${
+            movie.isAdded ? "" : `add-movie-button`
+          }  bg-nu color-beta ml-2">
+                        ${
+                          movie.isAdded
+                            ? `<i class="fa-solid fa-check color-success"></i>`
+                            : `<i class="fa-solid fa-plus  color-zeta"></i>`
+                        }
+                        ${
+                          movie.isAdded
+                            ? `<span class="color-success">Added</span>`
+                            : `<span class="color-zeta">Add</span>`
+                        }
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <dialog id="movie-dialog" data-movie-id="${
+                  movie.id
+                }" class="p-4 rounded border border-delta">
+                  <h4 id="dialog-title" class="mb-3 color-alpha"></h4>
+                  <img id="dialog-poster" class="mb-3 d-block" src="" alt="Movie Poster" style="max-width: 100%; border-radius: 10px;">
+                  <i id="dialog-release-date" class="d-block opacity-60"></i>
+                  <p id="dialog-overview"></p>
+
+                  <div class="d-flex gap-2 mt-3" id="dialog-footer">
+                  </div>
+                </dialog>
+                `;
+
+          // Aggiungi l'evento click al pulsante "Add"
+          movieElement
+            .querySelector(".add-movie-button")
+            ?.addEventListener("click", (e) => {
+              e.stopPropagation();
+              saveMovie(movie);
+            });
+          searchResults.appendChild(movieElement);
+        });
+      }
 
       // Funzione per salvare il film
       async function saveMovie(movie) {
@@ -172,36 +246,14 @@
           const res = await req.json();
 
           if (req.ok) {
+            movies.find((m) => m.id === movie.id).isAdded = true;
             alert("Film added Successfully");
 
-            // aggiorna il pulsante "Add" per mostrare che il film è stato aggiunto
-            const addMovieButton = document.getElementById(
-              `add-movie-button-${movie.id}`
-            );
-            addMovieButton.classList.remove("add-movie-button");
-            addMovieButton.innerHTML = `
-              <i class="fa-solid fa-check color-success"></i>
-              <span class="color-success">Added</span>
-            `;
-
-            // Agiorna anche il pulsante nel dialog
-            const dialogFooter = document.getElementById("dialog-footer");
-            dialogFooter.innerHTML = `
-            <button class="bg-danger color-alpha" onclick="document.getElementById('movie-dialog').close()">
-              <i class="fa-solid fa-xmark color-alpha"></i>
-              <span class="color-alpha">Close</span>
-            </button>
-              <button class="bg-success color-beta">
-                <i class="fa-solid fa-check color-beta"></i>
-                <span class="color-beta">In your list</span>
-              </button>
-            `;
-
-            console.log(dialogFooter);
+            renderMovies();
             // se il dialog è aperto, chiudilo
             document.getElementById("movie-dialog").close();
           } else {
-            alert("Error adding movie");
+            alert("Error adding movie \n", res.error);
           }
         } catch (error) {
           console.error(error);
@@ -209,8 +261,14 @@
         }
       }
 
-      // Gestore per il click del pulsante di ricerca
-      searchButton.addEventListener("click", () => {
+      // Funzione per gestire il tasto invio
+      function handleKeyDown(event) {
+        if (event.key === "Enter") {
+          handleSearch();
+        }
+      }
+
+      function handleSearch() {
         const query = searchQuery.value.trim();
         if (query) {
           fetch(`/search?query=${encodeURIComponent(query)}`)
@@ -218,77 +276,17 @@
             .then((data) => {
               searchResults.innerHTML = "";
               if (data.results && data.results.length > 0) {
-                data.results.forEach((movie) => {
-                  const movieElement = document.createElement("div");
-                  movieElement.classList.add(
-                    "movie-result",
-                    "mb-2",
-                    "p-2",
-                    "border",
-                    "border-iota",
-                    "rounded",
-                    "bg-gamma"
-                  );
-                  movieElement.innerHTML = `
-              <div class="d-flex align-items-center justify-content-start gap-3" onclick="openMovieDialog(${
-                movie.id
-              }, ${movie.isAdded})">
-                <img src="https://image.tmdb.org/t/p/w200${
-                  movie.poster_path
-                }" alt="${movie.title}"  />
-                <div>
-                  <strong>${movie.title}</strong>
-                  <div class="d-flex align-items-center justify-content-start gap-3">
-                    <i class="opacity-70">${movie.release_date}</i>
-                    <button id="add-movie-button-${movie.id}" class="${
-                    movie.isAdded ? "" : `add-movie-button`
-                  }  bg-nu color-beta ml-2">
-                      ${
-                        movie.isAdded
-                          ? `<i class="fa-solid fa-check color-success"></i>`
-                          : `<i class="fa-solid fa-plus  color-zeta"></i>`
-                      }
-                      ${
-                        movie.isAdded
-                          ? `<span class="color-success">Added</span>`
-                          : `<span class="color-zeta">Add</span>`
-                      }
-                    </button>
-                  </div>
-                </div>
-              </div>
-     
-              <dialog id="movie-dialog" data-movie-id="${
-                movie.id
-              }" class="p-4 rounded border border-delta">
-                <h4 id="dialog-title" class="mb-3 color-alpha"></h4>
-                 <img id="dialog-poster" class="mb-3 d-block" src="" alt="Movie Poster" style="max-width: 100%; border-radius: 10px;">
-                <i id="dialog-release-date" class="d-block opacity-60"></i>
-                <p id="dialog-overview"></p>
-               
-                <div class="d-flex gap-2 mt-3" id="dialog-footer">
-                </div>
-              </dialog>
-            `;
-
-                  // Aggiungi l'evento click al pulsante "Add"
-                  movieElement
-                    .querySelector(".add-movie-button")
-                    ?.addEventListener("click", (e) => {
-                      e.stopPropagation();
-                      saveMovie(movie);
-                    });
-                  searchResults.appendChild(movieElement);
-                });
+                movies = data.results;
+                renderMovies();
               } else {
                 searchResults.innerHTML = "<p>Nessun risultato trovato.</p>";
               }
             });
         }
-      });
+      }
     </script>
 
-    <!-- appri il dialog con la informazzione dal film -->
+    <!-- AUTO-AGGIUNTO: appri il dialog con la informazzione dal film -->
     <script>
       async function openMovieDialog(movieId, isAdded) {
         try {
@@ -346,7 +344,7 @@
       }
     </script>
 
-    <!--  renderizza il thumbnail quando il input cambii -->
+    <!-- AGGIUNTO MANUALE: renderizza il thumbnail quando il input cambii -->
     <script>
       const thumbnailInput = document.getElementById("thumbnail-input");
       const thumbnailPreview = document.getElementById("thumbnail-preview");

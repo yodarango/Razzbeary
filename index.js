@@ -69,7 +69,7 @@ const moviesTable = path.join(__dirname, moviesDBFile);
 const usersTable = path.join(__dirname, "users.json");
 
 const LOCK_FILE = ".lock"; // File di lock per evitare race conditions
-const BACKUP_EXT = ".backup.test.json"; // Estensione per il backup
+const BACKUP_FILE = "movies.backup.test.json"; // Estensione per il backup
 const TEMP_EXT = ".tmp"; // Estensione per scrittura temporanea
 
 /**
@@ -101,7 +101,7 @@ const readData = (filePath) => {
 const writeData = (filePath, data) => {
   const lockPath = filePath + LOCK_FILE;
   const tempPath = filePath + TEMP_EXT;
-  const backupPath = filePath + BACKUP_EXT;
+  const backupPath = BACKUP_FILE;
 
   try {
     // Se il file è in uso da un altro processo, aspetta

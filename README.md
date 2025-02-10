@@ -112,5 +112,4 @@ Razzbeary/
 
 # BUGS
 
-- Quando un film viene aggiunto, il modal di informazione dil film non viene aggiornato. Implementare il stesso modo di aggiornamento da "/" dove i film sono renderizatti dopo essere aggiunti
-- all pages besides "/" pull the browser in apple bookmark
+Niente qui - ✅✨🧼
