@@ -69,7 +69,10 @@ const moviesTable = path.join(__dirname, moviesDBFile);
 const usersTable = path.join(__dirname, "users.json");
 
 const LOCK_FILE = ".lock"; // File di lock per evitare race conditions
-const BACKUP_FILE = "movies.backup.test.json"; // Estensione per il backup
+const BACKUP_FILE =
+  process.env.ENVIRONMENT === "development"
+    ? "movies.backup.test.json"
+    : "movies.backup.json"; // Estensione per il backup
 const TEMP_EXT = ".tmp"; // Estensione per scrittura temporanea
 
 /**
