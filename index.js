@@ -69,7 +69,7 @@ const moviesTable = path.join(__dirname, moviesDBFile);
 const usersTable = path.join(__dirname, "users.json");
 
 const LOCK_FILE = ".lock"; // File di lock per evitare race conditions
-const BACKUP_EXT = ".bak"; // Estensione per il backup
+const BACKUP_EXT = ".backup.test.json"; // Estensione per il backup
 const TEMP_EXT = ".tmp"; // Estensione per scrittura temporanea
 
 /**
@@ -110,6 +110,7 @@ const writeData = (filePath, data) => {
       Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100); // Attendi 100ms
     }
 
+    console.log(data);
     // Crea un file di lock per impedire scritture simultanee
     fs.writeFileSync(lockPath, "LOCK", "utf8");
 
@@ -301,7 +302,7 @@ app.post("/new", isAuthenticated, (req, res) => {
     ratings: {},
   };
   movies.push(newMovie);
-  writeData(movies);
+  writeData(moviesTable, movies);
   res.redirect("/");
 });
 
@@ -343,7 +344,7 @@ app.post("/rate/:id", isAuthenticated, (req, res) => {
     return movie;
   });
 
-  writeData(movies);
+  writeData(moviesTable, movies);
   res.send({ movie: selectedMovie, isNewReview }).status(200);
 });
 
@@ -358,7 +359,7 @@ app.post("/edit/:id", isAuthenticated, (req, res) => {
     }
     return m;
   });
-  writeData(movies);
+  writeData(moviesTable, movies);
   res.redirect("/");
 });
 
@@ -366,7 +367,7 @@ app.post("/edit/:id", isAuthenticated, (req, res) => {
 app.post("/delete/:id", isAuthenticated, (req, res) => {
   let movies = readData(moviesTable);
   movies = movies.filter((m) => m.id !== parseInt(req.params.id));
-  writeData(movies);
+  writeData(moviesTable, movies);
   res.redirect("/");
 });
 
@@ -395,7 +396,7 @@ app.post("/add-from-tmdb", isAuthenticated, async (req, res) => {
   };
 
   movies.push(newMovie);
-  writeData(movies);
+  writeData(moviesTable, movies);
   res.status(201).json(newMovie);
 });
 
