@@ -68,16 +68,77 @@ const moviesDBFile =
 const moviesTable = path.join(__dirname, moviesDBFile);
 const usersTable = path.join(__dirname, "users.json");
 
-// Funzione per leggere i dati
-const readData = (path) => {
-  if (!fs.existsSync(path)) return [];
-  const data = fs.readFileSync(path);
-  return JSON.parse(data);
+const LOCK_FILE = ".lock"; // File di lock per evitare race conditions
+const BACKUP_EXT = ".bak"; // Estensione per il backup
+const TEMP_EXT = ".tmp"; // Estensione per scrittura temporanea
+
+/**
+ * Legge un file JSON in modo sicuro
+ */
+const readData = (filePath) => {
+  if (!fs.existsSync(filePath)) return [];
+
+  try {
+    const data = fs.readFileSync(filePath, "utf8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("❌ Errore durante la lettura di", filePath, error);
+
+    // Se esiste un backup valido, ripristinalo
+    const backupPath = filePath + BACKUP_EXT;
+    if (fs.existsSync(backupPath)) {
+      console.warn("⚠️ Ripristino dal backup...");
+      return JSON.parse(fs.readFileSync(backupPath, "utf8"));
+    }
+
+    return []; // Se il file è corrotto e nessun backup esiste, restituisce array vuoto
+  }
 };
 
-// Funzione per scrivere i dati
-const writeData = (data) => {
-  fs.writeFileSync(moviesTable, JSON.stringify(data, null, 2));
+/**
+ * Scrive in modo sicuro un file JSON con gestione dei lock e backup
+ */
+const writeData = (filePath, data) => {
+  const lockPath = filePath + LOCK_FILE;
+  const tempPath = filePath + TEMP_EXT;
+  const backupPath = filePath + BACKUP_EXT;
+
+  try {
+    // Se il file è in uso da un altro processo, aspetta
+    while (fs.existsSync(lockPath)) {
+      console.log("🔒 File in uso, in attesa...");
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100); // Attendi 100ms
+    }
+
+    // Crea un file di lock per impedire scritture simultanee
+    fs.writeFileSync(lockPath, "LOCK", "utf8");
+
+    // Backup della versione attuale prima della scrittura
+    if (fs.existsSync(filePath)) {
+      fs.copyFileSync(filePath, backupPath);
+    }
+
+    // Scrive i dati in un file temporaneo
+    fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), "utf8");
+
+    // Rinomina il file temporaneo nel file principale
+    fs.renameSync(tempPath, filePath);
+
+    console.log("✅ Dati salvati con successo in", filePath);
+  } catch (error) {
+    console.error("❌ Errore nella scrittura di", filePath, error);
+
+    // Se qualcosa va storto, tenta di ripristinare il backup
+    if (fs.existsSync(backupPath)) {
+      fs.copyFileSync(backupPath, filePath);
+      console.warn("⚠️ Backup ripristinato!");
+    }
+  } finally {
+    // Rimuove il file di lock alla fine
+    if (fs.existsSync(lockPath)) {
+      fs.unlinkSync(lockPath);
+    }
+  }
 };
 
 /***************************************************************
