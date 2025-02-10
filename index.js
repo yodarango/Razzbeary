@@ -274,7 +274,7 @@ app.post("/login", (req, res) => {
     return res.render("login", { error: "Your credentials are incorrect" });
   }
 
-  const token = jwt.sign(user, SECRET_KEY);
+  const token = jwt.sign(user, SECRET_KEY, { expiresIn: "365d" });
   res.cookie("token", token, { httpOnly: true });
   return res.redirect("/");
 });
