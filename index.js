@@ -265,6 +265,20 @@ app.get("/", (req, res) => {
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
+  // In modalità development, consenti solo l'utente "dev"
+  console.log(process.env.ENVIRONMENT);
+  if (
+    process.env.ENVIRONMENT === "development" &&
+    username.toLowerCase() !== "dev"
+  ) {
+    console.log(
+      "Login failed. Non-dev user attempted to login in development mode"
+    );
+    return res.render("login", {
+      error: "In development mode, only the 'dev' user can login",
+    });
+  }
+
   const users = readData(usersTable);
 
   const user = users.find(
