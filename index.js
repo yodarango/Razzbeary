@@ -88,7 +88,7 @@ const readData = (filePath) => {
     console.error("❌ Errore durante la lettura di", filePath, error);
 
     // Se esiste un backup valido, ripristinalo
-    const backupPath = filePath + BACKUP_EXT;
+    const backupPath = filePath + ".backup.json";
     if (fs.existsSync(backupPath)) {
       console.warn("⚠️ Ripristino dal backup...");
       return JSON.parse(fs.readFileSync(backupPath, "utf8"));
