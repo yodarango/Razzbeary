@@ -1,5 +1,5 @@
 const CACHE_NAME = "razzbeary-v1";
-const urlsToCache = ["/", "/index.html", "/razzbeary.webp"];
+const urlsToCache = ["/", "/index.html", "/razzbeary_splash.png"];
 
 // Installazione del service worker e caching delle risorse statiche
 self.addEventListener("install", (event) => {
